@@ -1,0 +1,24 @@
+import { type TExchangeNode } from '../types';
+import AcalaExchangeNode from './Acala/AcalaDex';
+import type ExchangeNode from './DexNode';
+import HydraDxExchangeNode from './HydraDx/HydraDxDex';
+import MangataExchangeNode from './Mangata/MangataDex';
+
+const map: Record<TExchangeNode, ExchangeNode> = {
+  // Reuse classes for Kusama equivalents
+  HydraDxDex: new HydraDxExchangeNode('HydraDX'),
+  BasiliskDex: new HydraDxExchangeNode('Basilisk'),
+  AcalaDex: new AcalaExchangeNode('Acala'),
+  KaruraDex: new AcalaExchangeNode('Karura'),
+  MangataDex: new MangataExchangeNode(),
+  // InterlayDex: new InterlayExchangeNode('Interlay'),
+  // KintsugiDex: new InterlayExchangeNode('Kintsugi'),
+  // BifrostPolkadotDex: new BifrostExchangeNode('BifrostPolkadot'),
+  // BifrostKusamaDex: new BifrostExchangeNode('BifrostKusama'),
+};
+
+const createDexNodeInstance = (node: TExchangeNode): ExchangeNode => {
+  return map[node];
+};
+
+export default createDexNodeInstance;

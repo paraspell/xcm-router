@@ -61,6 +61,7 @@ const App = () => {
   };
 
   const onConnectWalletClick = async () => {
+    await initAccounts();
     openModal();
   };
 

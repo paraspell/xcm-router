@@ -1,9 +1,15 @@
-import { type Extrinsic, InvalidCurrencyError, getAssetId } from '@paraspell/sdk';
+import { InvalidCurrencyError } from '@paraspell/sdk';
 import ExchangeNode from '../DexNode';
 import { BN } from '@polkadot/util';
-import { type TSwapOptions } from '../../types';
+import { type TSwapResult, type TSwapOptions } from '../../types';
 import { getMinAmountOut } from './utils';
 import { type ApiPromise } from '@polkadot/api';
+import {
+  Mangata,
+  type TokenInfo,
+  type MangataInstance,
+  type MultiswapSellAsset,
+} from '@mangata-finance/sdk';
 
 class MangataExchangeNode extends ExchangeNode {
   constructor() {
@@ -12,21 +18,35 @@ class MangataExchangeNode extends ExchangeNode {
 
   async swapCurrency(
     api: ApiPromise,
-    { currencyFrom, currencyTo, amount, slippagePct }: TSwapOptions,
-  ): Promise<Extrinsic> {
+    { currencyFrom, currencyTo, amount, slippagePct, injectorAddress }: TSwapOptions,
+  ): Promise<TSwapResult> {
     console.log('Swapping currency on Mangata');
 
-    const currencyFromId = getAssetId(this.node, currencyFrom);
-    const currencyToId = getAssetId(this.node, currencyTo);
+    const mangata: MangataInstance = Mangata.instance(['wss://kusama-archive.mangata.online']);
 
-    if (currencyFromId === undefined) {
+    const assetFromInfo: TokenInfo = await mangata.query.getTokenInfo(currencyFrom);
+    const assetToInfo: TokenInfo = await mangata.query.getTokenInfo(currencyTo);
+
+    if (assetFromInfo === undefined) {
       throw new InvalidCurrencyError("Currency from doesn't exist");
-    } else if (currencyToId === undefined) {
+    } else if (assetToInfo === undefined) {
       throw new InvalidCurrencyError("Currency to doesn't exist");
     }
 
     const minAmountOut = getMinAmountOut(new BN(amount), slippagePct);
-    return api.tx.xyk.multiswapSellAsset([currencyFromId, currencyToId], amount, minAmountOut);
+
+    const args: MultiswapSellAsset = {
+      account: injectorAddress,
+      tokenIds: [assetFromInfo.id, assetToInfo.id],
+      amount: new BN(amount),
+      minAmountOut,
+    };
+    const tx = await mangata.submitableExtrinsic.multiswapSellAsset(args);
+
+    return {
+      tx,
+      amountOut: '0',
+    };
   }
 }
 

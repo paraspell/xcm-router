@@ -16,3 +16,5 @@ export const NODES_WITH_RELAY_CHAIN = [...NODE_NAMES, 'Polkadot', 'Kusama'] as c
 
 export const POLKADOT_WS = 'wss://rpc.polkadot.io';
 export const KUSAMA_WS = 'wss://kusama-rpc.polkadot.io';
+
+export const FEE_BUFFER = 1.5;

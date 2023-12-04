@@ -40,8 +40,8 @@ dependencies:
     specifier: ^2.1.1
     version: 2.1.1(@polkadot/api@10.11.1)(@polkadot/types@10.11.1)
   '@paraspell/sdk':
-    specifier: ^3.0.5
-    version: 3.0.5(@polkadot/api-base@10.11.1)(@polkadot/api@10.11.1)(@polkadot/apps-config@0.132.1)(@polkadot/types@10.11.1)
+    specifier: file:./paraspell-sdk-3.0.7.tgz
+    version: file:paraspell-sdk-3.0.7.tgz(@polkadot/api-base@10.11.1)(@polkadot/api@10.11.1)(@polkadot/apps-config@0.132.1)(@polkadot/types@10.11.1)(@polkadot/util@12.6.1)
   '@polkadot/api':
     specifier: ^10.11.1
     version: 10.11.1
@@ -61,8 +61,8 @@ dependencies:
     specifier: ^1.6.2
     version: 1.6.2
   bignumber.js:
-    specifier: 4.0.4
-    version: 4.0.4
+    specifier: ^9.1.2
+    version: 9.1.2
   jsbi:
     specifier: ^4.3.0
     version: 4.3.0
@@ -2373,24 +2373,6 @@ packages:
     resolution: {integrity: sha512-OFz9sXwlp90xDdKK1gUvpdUsnlUPhhRhzvC0SqOnnT1SCpJgPv4RD5DGBN6wSHuRwNsYnCWH+8RkK7jWVgUvrQ==}
     dependencies:
       '@open-web3/orml-type-definitions': 2.0.1
-    dev: false
-
-  /@paraspell/sdk@3.0.5(@polkadot/api-base@10.11.1)(@polkadot/api@10.11.1)(@polkadot/apps-config@0.132.1)(@polkadot/types@10.11.1):
-    resolution: {integrity: sha512-p2sY0XidE/+Xzj6SzU4WGfXq85t35Er87KIq03RYBpDNSWS3nxcH1w3Wgh037gMXW2nGR1e5vmWjHtMwSo6uEw==}
-    peerDependencies:
-      '@polkadot/api': ^10.6.1
-      '@polkadot/api-base': ^10.6.1
-      '@polkadot/apps-config': ^0.132.1
-      '@polkadot/types': ^10.6.1
-    dependencies:
-      '@polkadot/api': 10.11.1
-      '@polkadot/api-base': 10.11.1
-      '@polkadot/apps-config': 0.132.1(@polkadot/keyring@12.6.1)(@polkadot/util-crypto@12.6.1)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
-      '@polkadot/types': 10.11.1
-      ethers: 5.7.2
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
     dev: false
 
   /@peaqnetwork/type-definitions@0.0.4:
@@ -4956,10 +4938,6 @@ packages:
 
   /big.js@6.2.1:
     resolution: {integrity: sha512-bCtHMwL9LeDIozFn+oNhhFoq+yQ3BNdnsLSASUxLciOb1vgvpHsIO1dsENiGMgbb4SkP5TrzWzRiLddn8ahVOQ==}
-    dev: false
-
-  /bignumber.js@4.0.4:
-    resolution: {integrity: sha512-LDXpJKVzEx2/OqNbG9mXBNvHuiRL4PzHCGfnANHMJ+fv68Ads3exDVJeGDJws+AoNEuca93bU3q+S0woeUaCdg==}
     dev: false
 
   /bignumber.js@9.1.2:
@@ -8028,3 +8006,26 @@ packages:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
     dev: true
+
+  file:paraspell-sdk-3.0.7.tgz(@polkadot/api-base@10.11.1)(@polkadot/api@10.11.1)(@polkadot/apps-config@0.132.1)(@polkadot/types@10.11.1)(@polkadot/util@12.6.1):
+    resolution: {integrity: sha512-haoccHWpxJqkVWUyZXlkVYOLTOlOcwG+u7Hy+HNnGkkHf+1hcg0u8SWjUMFUR64bjQsBgdbxsPaNuoIM17r9kg==, tarball: file:paraspell-sdk-3.0.7.tgz}
+    id: file:paraspell-sdk-3.0.7.tgz
+    name: '@paraspell/sdk'
+    version: 3.0.5
+    peerDependencies:
+      '@polkadot/api': ^10.6.1
+      '@polkadot/api-base': ^10.6.1
+      '@polkadot/apps-config': ^0.132.1
+      '@polkadot/types': ^10.6.1
+      '@polkadot/util': ^12.6.1
+    dependencies:
+      '@polkadot/api': 10.11.1
+      '@polkadot/api-base': 10.11.1
+      '@polkadot/apps-config': 0.132.1(@polkadot/keyring@12.6.1)(@polkadot/util-crypto@12.6.1)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
+      '@polkadot/types': 10.11.1
+      '@polkadot/util': 12.6.1
+      ethers: 5.7.2
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: false

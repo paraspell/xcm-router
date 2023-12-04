@@ -1,30 +1,48 @@
-# React + TypeScript + Vite
+# SpellRouter playground
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a quick start guide for a Vite React project. It uses `pnpm` for package management.
 
-Currently, two official plugins are available:
+## Prerequisites
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Before you begin, ensure you have met the following requirements:
 
-## Expanding the ESLint configuration
+- You have installed [Node.js](https://nodejs.org/en/download/)
+- You have installed [pnpm](https://pnpm.io/installation)
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Installing Vite React Project
 
-- Configure the top-level `parserOptions` property like this:
+To install dependencies, follow these steps:
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```bash
+pnpm install
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Only pnpm is supported for now.
+
+## Using Vite React Project
+
+To use Vite React Project, follow these steps:
+
+```bash
+pnpm dev
+```
+
+This will start the development server. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+## Running Tests
+
+To run tests, use the following command:
+
+```bash
+pnpm test
+```
+
+## Building the Project
+
+To build the project for production, use the following command:
+
+```bash
+pnpm build
+```
+
+This will create a `dist` directory with the production build.

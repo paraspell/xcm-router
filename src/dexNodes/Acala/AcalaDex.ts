@@ -3,17 +3,17 @@ import ExchangeNode from '../DexNode';
 import { FixedPointNumber } from '@acala-network/sdk-core';
 import { AcalaDex, AggregateDex } from '@acala-network/sdk-swap';
 import { Wallet } from '@acala-network/sdk';
-import { type TSwapOptions } from '../../types';
+import { type TSwapResult, type TSwapOptions } from '../../types';
 import { firstValueFrom } from 'rxjs';
 import { type ApiPromise } from '@polkadot/api';
-import { createAcalaApiInstance } from './utils';
+import { calculateAcalaTransactionFee, createAcalaApiInstance } from './utils';
+import BigNumber from 'bignumber.js';
 
 class AcalaExchangeNode extends ExchangeNode {
-  async swapCurrency(
-    api: ApiPromise,
-    { currencyFrom, currencyTo, amount }: TSwapOptions,
-  ): Promise<Extrinsic> {
+  async swapCurrency(api: ApiPromise, options: TSwapOptions): Promise<TSwapResult> {
     console.log('Swapping currency on Acala');
+
+    const { currencyFrom, currencyTo, amount } = options;
 
     const wallet = new Wallet(api as any);
     await wallet.isReady;
@@ -21,37 +21,55 @@ class AcalaExchangeNode extends ExchangeNode {
     const fromToken = wallet.getToken(currencyFrom);
     const toToken = wallet.getToken(currencyTo);
 
+    const acalaDex = new AcalaDex({ api, wallet });
+
     const dex = new AggregateDex({
       api,
       wallet,
-      providers: [new AcalaDex({ api, wallet })],
+      providers: [acalaDex],
     });
 
-    const fee = api.consts.dex.getExchangeFee;
-    console.log(fee.toHuman());
+    const amountBN = new BigNumber(amount);
 
-    // const amountBnum = new BigNumber(amount)
-    //   .div(new BigNumber(10).pow(fromToken.decimals))
-    //   .toFixed();
+    const feeInCurrencyFromBN = await calculateAcalaTransactionFee(
+      dex,
+      wallet,
+      fromToken,
+      toToken,
+      options,
+    );
 
-    // console.log(amountBnum);
+    console.log('feeInCurrencyFromBN', feeInCurrencyFromBN.toString());
 
-    const result = await firstValueFrom(
+    const amountWithoutFee = amountBN.minus(feeInCurrencyFromBN);
+
+    console.log('amountWithoutFee', amountWithoutFee.toString());
+
+    const tradeResult = await firstValueFrom(
       dex.swap({
         path: [fromToken, toToken],
         source: 'aggregate',
         mode: 'EXACT_INPUT',
-        input: new FixedPointNumber(amount, fromToken.decimals),
+        input: new FixedPointNumber(
+          amountWithoutFee.shiftedBy(-fromToken.decimals).toNumber(),
+          fromToken.decimals,
+        ),
       }),
     );
 
-    // console.log(result.result.exchangeFee.toString());
+    const tx = dex.getTradingTx(tradeResult) as unknown as Extrinsic;
 
-    return dex.getTradingTx(result) as unknown as Extrinsic;
+    const amountOut = tradeResult.result.output.amount.toString();
+    const amountOutBN = new BigNumber(amountOut).shiftedBy(toToken.decimals);
+
+    console.log(amountOutBN.toString());
+    console.log(toToken.decimals);
+
+    return { tx, amountOut: amountOutBN.toString() };
   }
 
   async createApiInstance(): Promise<ApiPromise> {
-    return await createAcalaApiInstance();
+    return await createAcalaApiInstance(this.node);
   }
 }
 

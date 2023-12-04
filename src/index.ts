@@ -34,9 +34,10 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
       status: TransactionStatus.IN_PROGRESS,
     });
     const originApi = await createApiInstanceForNode(originNode);
-    await transferToExchange(originApi, modifiedOptions);
+    const txHash = await transferToExchange(originApi, modifiedOptions);
     maybeUpdateStatus(onStatusChange, {
       type: TransactionType.TO_EXCHANGE,
+      hashes: { [TransactionType.TO_EXCHANGE]: txHash },
       status: TransactionStatus.SUCCESS,
     });
   } else if (options.type === TransactionType.SWAP) {
@@ -45,9 +46,10 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
       status: TransactionStatus.IN_PROGRESS,
     });
     const swapApi = await exchangeNode.createApiInstance();
-    await swap(swapApi, exchangeNode, modifiedOptions);
+    const { txHash } = await swap(swapApi, exchangeNode, modifiedOptions);
     maybeUpdateStatus(onStatusChange, {
       type: TransactionType.SWAP,
+      hashes: { [TransactionType.SWAP]: txHash },
       status: TransactionStatus.SUCCESS,
     });
   } else if (options.type === TransactionType.FROM_EXCHANGE) {
@@ -56,9 +58,10 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
       status: TransactionStatus.IN_PROGRESS,
     });
     const swapApi = await exchangeNode.createApiInstance();
-    await transferToDestination(swapApi, modifiedOptions);
+    const txHash = await transferToDestination(swapApi, modifiedOptions, modifiedOptions.amount);
     maybeUpdateStatus(onStatusChange, {
       type: TransactionType.FROM_EXCHANGE,
+      hashes: { [TransactionType.FROM_EXCHANGE]: txHash },
       status: TransactionStatus.SUCCESS,
     });
   } else {
@@ -67,30 +70,45 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
       status: TransactionStatus.IN_PROGRESS,
     });
     const originApi = await createApiInstanceForNode(originNode);
-    await transferToExchange(originApi, modifiedOptions);
+    const txHashToExchange = await transferToExchange(originApi, modifiedOptions);
     maybeUpdateStatus(onStatusChange, {
       type: TransactionType.TO_EXCHANGE,
+      hashes: { [TransactionType.TO_EXCHANGE]: txHashToExchange },
       status: TransactionStatus.SUCCESS,
     });
     await delay(1000);
     maybeUpdateStatus(onStatusChange, {
       type: TransactionType.SWAP,
+      hashes: { [TransactionType.TO_EXCHANGE]: txHashToExchange },
       status: TransactionStatus.IN_PROGRESS,
     });
     const swapApi = await exchangeNode.createApiInstance();
-    await swap(swapApi, exchangeNode, modifiedOptions);
+    const { amountOut, txHash: txHashSwap } = await swap(swapApi, exchangeNode, modifiedOptions);
     maybeUpdateStatus(onStatusChange, {
       type: TransactionType.SWAP,
+      hashes: {
+        [TransactionType.TO_EXCHANGE]: txHashToExchange,
+        [TransactionType.SWAP]: txHashSwap,
+      },
       status: TransactionStatus.SUCCESS,
     });
     await delay(1000);
     maybeUpdateStatus(onStatusChange, {
       type: TransactionType.FROM_EXCHANGE,
+      hashes: {
+        [TransactionType.TO_EXCHANGE]: txHashToExchange,
+        [TransactionType.SWAP]: txHashSwap,
+      },
       status: TransactionStatus.IN_PROGRESS,
     });
-    await transferToDestination(swapApi, modifiedOptions);
+    const txHashToDest = await transferToDestination(swapApi, modifiedOptions, amountOut);
     maybeUpdateStatus(onStatusChange, {
       type: TransactionType.FROM_EXCHANGE,
+      hashes: {
+        [TransactionType.TO_EXCHANGE]: txHashToExchange,
+        [TransactionType.SWAP]: txHashSwap,
+        [TransactionType.FROM_EXCHANGE]: txHashToDest,
+      },
       status: TransactionStatus.SUCCESS,
     });
   }
@@ -124,17 +142,18 @@ const buildToExchangeExtrinsic = (
 
 const buildFromExchangeExtrinsic = (
   api: ApiPromise,
-  { destinationNode, exchangeNode, currencyTo, amount, address }: TTransferOptionsModified,
+  { destinationNode, exchangeNode, currencyTo, address }: TTransferOptionsModified,
+  amountOut: string,
 ): Extrinsic => {
   const builder = Builder(api);
   if (destinationNode === 'Polkadot' || destinationNode === 'Kusama') {
-    return builder.from(exchangeNode).amount(amount).address(address).build();
+    return builder.from(exchangeNode).amount(amountOut).address(address).build();
   }
   return builder
     .from(exchangeNode)
     .to(destinationNode)
     .currency(currencyTo)
-    .amount(amount)
+    .amount(amountOut)
     .address(address)
     .build();
 };
@@ -143,32 +162,34 @@ export const swap = async (
   api: ApiPromise,
   exchangeNode: ExchangeNode,
   options: TTransferOptionsModified,
-): Promise<void> => {
+): Promise<{ amountOut: string; txHash: string }> => {
   const { signer, injectorAddress } = options;
-  const tx = await exchangeNode.swapCurrency(api, options);
-  await submitTransaction(api, tx, signer, injectorAddress);
+  const { tx, amountOut } = await exchangeNode.swapCurrency(api, options);
+  const txHash = await submitTransaction(api, tx, signer, injectorAddress);
+  return { amountOut, txHash };
 };
 
 export const transferToExchange = async (
   api: ApiPromise,
   options: TTransferOptionsModified,
-): Promise<void> => {
+): Promise<string> => {
   console.log('Transfering to exchange chain');
   const { originNode, currencyFrom, signer, injectorAddress } = options;
   validateCurrency(originNode, currencyFrom);
   const tx = buildToExchangeExtrinsic(api, options);
-  await submitTransaction(api, tx, signer, injectorAddress);
+  return await submitTransaction(api, tx, signer, injectorAddress);
 };
 
 export const transferToDestination = async (
   api: ApiPromise,
   options: TTransferOptionsModified,
-): Promise<void> => {
+  amountOut: string,
+): Promise<string> => {
   console.log('transfering to destination chain');
   const { destinationNode, currencyTo, signer, injectorAddress } = options;
   validateCurrency(destinationNode, currencyTo);
-  const tx = buildFromExchangeExtrinsic(api, options);
-  await submitTransaction(api, tx, signer, injectorAddress);
+  const tx = buildFromExchangeExtrinsic(api, options, amountOut);
+  return await submitTransaction(api, tx, signer, injectorAddress);
 };
 
 export * from './types';

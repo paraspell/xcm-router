@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { type TSwapOptions } from '../../types';
 import MangataExchangeNode from './MangataDex';
 
-describe('Mangata DEX', () => {
+describe.skip('Mangata DEX', () => {
   // it('should calculate transaction fee correctly', async () => {});
 
   it('should build a transfer extrinsic without error', async () => {

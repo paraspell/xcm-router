@@ -1,6 +1,6 @@
-import { getNodeProvider, type Extrinsic, getAssetId } from '@paraspell/sdk';
+import { getNodeProvider, getAssetId } from '@paraspell/sdk';
 import ExchangeNode from '../DexNode';
-import { type TSwapOptions } from '../../types';
+import { type TSwapResult, type TSwapOptions } from '../../types';
 import { createInterBtcApi, getAllTradingPairs, newMonetaryAmount } from '@interlay/interbtc-api';
 import { type ApiPromise } from '@polkadot/api';
 
@@ -8,7 +8,7 @@ class InterlayExchangeNode extends ExchangeNode {
   async swapCurrency(
     api: ApiPromise,
     { injectorAddress, currencyFrom, currencyTo, amount, slippagePct }: TSwapOptions,
-  ): Promise<Extrinsic> {
+  ): Promise<TSwapResult> {
     console.log('Swapping currency on Interlay');
 
     const interBTC = await createInterBtcApi(getNodeProvider(this.node), 'mainnet');
@@ -48,7 +48,6 @@ class InterlayExchangeNode extends ExchangeNode {
     const deadline = 999999;
 
     const trade1 = interBTC.amm.swap(trade, outputAmount, injectorAddress, deadline);
-
     return trade1.extrinsic as any;
   }
 }

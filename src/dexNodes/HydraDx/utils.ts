@@ -1,5 +1,6 @@
 import { BigNumber, type TradeRouter, bnum } from '@galacticcouncil/sdk';
 import { type TSwapOptions } from '../../types';
+import { type Extrinsic } from '@paraspell/sdk';
 
 export const calculateFee = async (
   { amount, slippagePct, injectorAddress }: TSwapOptions,
@@ -9,11 +10,7 @@ export const calculateFee = async (
 ): Promise<BigNumber> => {
   const amountBnum = BigNumber(amount);
 
-  const trade: any = await tradeRouter.getBestSell(
-    currencyFromId,
-    currencyToId,
-    amountBnum.toString(),
-  );
+  const trade = await tradeRouter.getBestSell(currencyFromId, currencyToId, amountBnum.toString());
   const minAmountOut = getMinAmountOut(trade.amountOut, 18, slippagePct);
 
   const price = await tradeRouter.getBestSpotPrice('0', currencyFromId);
@@ -22,9 +19,9 @@ export const calculateFee = async (
     throw new Error('Price not found');
   }
 
-  const partialFee = (
-    await trade.toTx(minAmountOut.amount).get().paymentInfo(injectorAddress)
-  ).partialFee.toNumber();
+  const tx: Extrinsic = trade.toTx(minAmountOut.amount).get();
+
+  const partialFee = (await tx.paymentInfo(injectorAddress)).partialFee.toNumber();
 
   const feeHdx = BigNumber(partialFee).dividedBy(Math.pow(10, 12));
 
@@ -57,9 +54,9 @@ export const getMinAmountOut = (
 };
 
 export const findCurrencyId = async (
-  tradeRouter: any,
+  tradeRouter: TradeRouter,
   currencySymbol: string,
 ): Promise<string | undefined> => {
-  const assetPairs = await tradeRouter.getAllAssets();
-  return assetPairs.find((assetPair: any) => assetPair.symbol === currencySymbol)?.id;
+  const assets = await tradeRouter.getAllAssets();
+  return assets.find((asset: any) => asset.symbol === currencySymbol)?.id;
 };

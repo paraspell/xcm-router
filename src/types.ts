@@ -1,4 +1,4 @@
-import { type TNode } from '@paraspell/sdk';
+import { type Extrinsic, type TNode } from '@paraspell/sdk';
 import { type Signer } from '@polkadot/types/types';
 import { type NODES_WITH_RELAY_CHAIN, type EXCHANGE_NODES } from './consts/consts';
 
@@ -14,10 +14,27 @@ export interface TSwapOptions {
   injectorAddress: string;
 }
 
+export interface TSwapResult {
+  tx: Extrinsic;
+  amountOut: string;
+}
+
 export type TNodeWithRelayChains = (typeof NODES_WITH_RELAY_CHAIN)[number];
+
+export enum TransactionType {
+  TO_EXCHANGE = 'TO_EXCHANGE',
+  SWAP = 'SWAP',
+  FROM_EXCHANGE = 'FROM_EXCHANGE',
+  FULL_TRANSFER = 'FULL_TRANSFER',
+}
 
 export interface TTxProgressInfo {
   type: TransactionType;
+  hashes?: {
+    [TransactionType.TO_EXCHANGE]?: string;
+    [TransactionType.SWAP]?: string;
+    [TransactionType.FROM_EXCHANGE]?: string;
+  };
   status: TransactionStatus;
 }
 
@@ -44,10 +61,3 @@ export interface TTransferOptions {
 export type TTransferOptionsModified = Omit<TTransferOptions, 'exchangeNode'> & {
   exchangeNode: TNode;
 };
-
-export enum TransactionType {
-  TO_EXCHANGE = 'TO_EXCHANGE',
-  SWAP = 'SWAP',
-  FROM_EXCHANGE = 'FROM_EXCHANGE',
-  FULL_TRANSFER = 'FULL_TRANSFER',
-}

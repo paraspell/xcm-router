@@ -1,13 +1,12 @@
-import { type Extrinsic } from '@paraspell/sdk';
 import ExchangeNode from '../DexNode';
-import { type TSwapOptions } from '../../types';
+import { type TSwapResult, type TSwapOptions } from '../../types';
 import { type ApiPromise } from '@polkadot/api';
 
 class BifrostExchangeNode extends ExchangeNode {
   async swapCurrency(
     api: ApiPromise,
     { currencyFrom, currencyTo, amount, injectorAddress }: TSwapOptions,
-  ): Promise<Extrinsic> {
+  ): Promise<TSwapResult> {
     console.log('Swapping currency on Bifrost');
 
     // const provider = new WsProvider(getNodeProvider('BifrostPolkadot'));

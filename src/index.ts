@@ -16,7 +16,7 @@ import {
 } from './utils';
 import { type ApiPromise } from '@polkadot/api';
 import type ExchangeNode from './dexNodes/DexNode';
-import BigNumber from 'bignumber.js';
+import type BigNumber from 'bignumber.js';
 
 const maybeUpdateStatus = (
   onStatusChange: ((info: TTxProgressInfo) => void) | undefined,
@@ -52,7 +52,9 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
       status: TransactionStatus.IN_PROGRESS,
     });
     const swapApi = await exchangeNode.createApiInstance();
-    const { txHash } = await swap(swapApi, exchangeNode, modifiedOptions, new BigNumber(0));
+    const toDestTx = buildFromExchangeExtrinsic(swapApi, modifiedOptions, amount);
+    const toDestTransactionFee = await calculateTransactionFee(toDestTx, injectorAddress);
+    const { txHash } = await swap(swapApi, exchangeNode, modifiedOptions, toDestTransactionFee);
     maybeUpdateStatus(onStatusChange, {
       type: TransactionType.SWAP,
       hashes: { [TransactionType.SWAP]: txHash },

@@ -47,10 +47,14 @@ export const calculateFee = async (
   const tx: Extrinsic = trade.toTx(minAmountOut.amount).get();
   const swapFee = await calculateTransactionFee(tx, injectorAddress);
   const swapFeeNativeCurrency = new BigNumber(swapFee.toNumber());
-  const feeInNativeCurrency = swapFeeNativeCurrency.plus(toDestTransactionFee);
+  const feeInNativeCurrency = swapFeeNativeCurrency
+    .plus(toDestTransactionFee)
+    .plus(toDestTransactionFee);
 
-  console.log('XCM fee:', toDestTransactionFee.toNumber());
-  console.log('Swap fee:', swapFee.toNumber());
+  console.log('XCM to exch. fee:', toDestTransactionFee.toString(), nativeCurrencyInfo.symbol);
+  console.log('XCM to dest. fee:', toDestTransactionFee.toString(), nativeCurrencyInfo.symbol);
+  console.log('Swap fee:', swapFee.toString(), nativeCurrencyInfo.symbol);
+  console.log('Total fee:', feeInNativeCurrency.toString(), nativeCurrencyInfo.symbol);
 
   if (currencyFromInfo.symbol === nativeCurrencyInfo.symbol) return feeInNativeCurrency;
 
@@ -61,18 +65,23 @@ export const calculateFee = async (
     -currencyFromPriceInfo.decimals,
   );
 
-  console.log(
-    'hydra fee',
-    currencyFromPriceNormalNumber,
-    feeNativeCurrencyNormalNumber,
-    currencyFromPriceInfo.decimals,
-  );
-
   const currencyFromFee = feeNativeCurrencyNormalNumber.dividedBy(currencyFromPriceNormalNumber);
+
+  console.log(
+    'Total fee in currency from:',
+    currencyFromFee.toString(),
+    ' ',
+    currencyFromInfo.symbol,
+  );
 
   const finalFee = currencyFromFee.multipliedBy(FEE_BUFFER);
 
-  console.log(currencyFromFee, finalFee);
+  console.log(
+    'Total fee in currency from with buffer 50%:',
+    finalFee.toString(),
+    ' ',
+    currencyFromInfo.symbol,
+  );
 
   return finalFee.shiftedBy(currencyFromDecimals);
 };

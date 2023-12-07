@@ -14,7 +14,7 @@
     "@mantine/form": "^7.2.2",
     "@mantine/hooks": "^7.2.2",
     "@paraspell/sdk": "^3.0.5",
-    "@paraspell/xcm-router": "file:./paraspell-xcm-router-0.0.29.tgz",
+    "@paraspell/xcm-router": "file:./paraspell-xcm-router-0.0.32.tgz",
     "@polkadot/extension-dapp": "^0.46.6",
     "@polkadot/extension-inject": "^0.46.6",
     "@polkadot/keyring": "^12.6.1",

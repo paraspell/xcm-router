@@ -66,7 +66,7 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
       status: TransactionStatus.IN_PROGRESS,
     });
     const swapApi = await exchangeNode.createApiInstance();
-    const txHash = await transferToDestination(swapApi, modifiedOptions, modifiedOptions.amount);
+    const txHash = await transferToDestination(swapApi, modifiedOptions, amount);
     maybeUpdateStatus(onStatusChange, {
       type: TransactionType.FROM_EXCHANGE,
       hashes: { [TransactionType.FROM_EXCHANGE]: txHash },

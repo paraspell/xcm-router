@@ -4,6 +4,7 @@ import { PoolService, TradeRouter, BigNumber, PoolType } from '@galacticcouncil/
 import { calculateFee, getAssetInfo, getMinAmountOut } from './utils';
 import { type TSwapResult, type TSwapOptions } from '../../types';
 import { type ApiPromise } from '@polkadot/api';
+import { FEE_BUFFER } from '../../consts/consts';
 
 class HydraDxExchangeNode extends ExchangeNode {
   async swapCurrency(
@@ -60,7 +61,46 @@ class HydraDxExchangeNode extends ExchangeNode {
     const minAmountOut = getMinAmountOut(trade.amountOut, currencyFromDecimals, slippagePct);
     const tx: Extrinsic = await trade.toTx(minAmountOut.amount).get();
 
-    return { tx, amountOut: trade.amountOut.toString() };
+    const amountOut = trade.amountOut;
+
+    const nativeCurrencyInfo = await getAssetInfo(
+      tradeRouter,
+      this.node === 'HydraDX' ? 'HDX' : 'BSX',
+    );
+
+    if (nativeCurrencyInfo === undefined) {
+      throw new InvalidCurrencyError('Native currency not found');
+    }
+
+    const nativeCurrencyDecimals = getAssetDecimals(this.node, nativeCurrencyInfo.symbol);
+
+    if (nativeCurrencyDecimals === null) {
+      throw new Error('Native currency decimals not found');
+    }
+
+    const priceInfo = await tradeRouter.getBestSpotPrice(currencyToInfo.id, nativeCurrencyInfo.id);
+
+    if (priceInfo === undefined) {
+      throw new Error('Price not found');
+    }
+
+    const currencyToPriceNormalNumber = priceInfo.amount.shiftedBy(-priceInfo.decimals);
+
+    const feeNativeCurrencyNormalNumber = toDestTransactionFee.shiftedBy(-nativeCurrencyDecimals);
+
+    const currencyToFee = feeNativeCurrencyNormalNumber
+      .multipliedBy(FEE_BUFFER)
+      .dividedBy(currencyToPriceNormalNumber);
+
+    console.log('Amount out fee', currencyToFee.toString(), nativeCurrencyInfo.symbol);
+
+    const currencyToFeeBnum = currencyToFee.shiftedBy(currencyToDecimals);
+    const amountOutModified = amountOut.minus(currencyToFeeBnum).decimalPlaces(0);
+
+    console.log('Amount out original', amountOut.toString());
+    console.log('Amount out modified', amountOutModified.toString());
+
+    return { tx, amountOut: amountOutModified.toString() };
   }
 }
 

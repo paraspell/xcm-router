@@ -1,35 +1,77 @@
-import { BigNumber, type TradeRouter, bnum } from '@galacticcouncil/sdk';
+import { BigNumber, type TradeRouter, bnum, type PoolAsset } from '@galacticcouncil/sdk';
 import { type TSwapOptions } from '../../types';
-import { type Extrinsic } from '@paraspell/sdk';
+import { type TNode, type Extrinsic, getAssetDecimals } from '@paraspell/sdk';
+import { FEE_BUFFER } from '../../consts/consts';
+import { calculateTransactionFee } from '../../utils';
 
 export const calculateFee = async (
   { amount, slippagePct, injectorAddress }: TSwapOptions,
   tradeRouter: TradeRouter,
-  currencyFromId: string,
-  currencyToId: string,
+  currencyFromInfo: PoolAsset,
+  currencyToInfo: PoolAsset,
+  currencyFromDecimals: number,
+  currencyToDecimals: number,
+  node: TNode,
+  toDestTransactionFee: BigNumber,
 ): Promise<BigNumber> => {
   const amountBnum = BigNumber(amount);
 
-  const trade = await tradeRouter.getBestSell(currencyFromId, currencyToId, amountBnum.toString());
-  const minAmountOut = getMinAmountOut(trade.amountOut, 18, slippagePct);
+  const trade = await tradeRouter.getBestSell(
+    currencyFromInfo.id,
+    currencyToInfo.id,
+    amountBnum.toString(),
+  );
+  const minAmountOut = getMinAmountOut(trade.amountOut, currencyToDecimals, slippagePct);
 
-  const price = await tradeRouter.getBestSpotPrice('0', currencyFromId);
+  const nativeCurrencyInfo = await getAssetInfo(tradeRouter, node === 'HydraDX' ? 'HDX' : 'BSX');
 
-  if (price === undefined) {
+  if (nativeCurrencyInfo === undefined) {
+    throw new Error('Native currency not found');
+  }
+
+  const nativeCurrencyDecimals = getAssetDecimals(node, nativeCurrencyInfo.symbol);
+
+  if (nativeCurrencyDecimals === null) {
+    throw new Error('Native currency decimals not found');
+  }
+
+  const currencyFromPriceInfo = await tradeRouter.getBestSpotPrice(
+    currencyFromInfo.id,
+    nativeCurrencyInfo.id,
+  );
+
+  if (currencyFromPriceInfo === undefined) {
     throw new Error('Price not found');
   }
 
   const tx: Extrinsic = trade.toTx(minAmountOut.amount).get();
+  const swapFee = await calculateTransactionFee(tx, injectorAddress);
+  const swapFeeNativeCurrency = new BigNumber(swapFee.toNumber());
+  const feeInNativeCurrency = swapFeeNativeCurrency.plus(toDestTransactionFee);
 
-  const partialFee = (await tx.paymentInfo(injectorAddress)).partialFee.toNumber();
+  if (currencyFromInfo.symbol === nativeCurrencyInfo.symbol) return feeInNativeCurrency;
 
-  const feeHdx = BigNumber(partialFee).dividedBy(Math.pow(10, 12));
+  const feeNativeCurrencyNormalNumber = feeInNativeCurrency.shiftedBy(-nativeCurrencyDecimals);
 
-  const astrPrice = price.amount;
-  const astrPrice12dec = astrPrice.dividedBy(Math.pow(10, 18));
-  const astrFee = feeHdx.multipliedBy(astrPrice12dec);
-  const finalFee = astrFee.multipliedBy(1.5);
-  return finalFee.multipliedBy(BigNumber(10).pow(18));
+  const currencyFromPrice = currencyFromPriceInfo.amount;
+  const currencyFromPriceNormalNumber = currencyFromPrice.shiftedBy(
+    -currencyFromPriceInfo.decimals,
+  );
+
+  console.log(
+    'hydra fee',
+    currencyFromPriceNormalNumber,
+    feeNativeCurrencyNormalNumber,
+    currencyFromPriceInfo.decimals,
+  );
+
+  const currencyFromFee = feeNativeCurrencyNormalNumber.dividedBy(currencyFromPriceNormalNumber);
+
+  const finalFee = currencyFromFee.multipliedBy(FEE_BUFFER);
+
+  console.log(currencyFromFee, finalFee);
+
+  return finalFee.shiftedBy(currencyFromDecimals);
 };
 
 export const PCT_100 = bnum('100');
@@ -53,10 +95,10 @@ export const getMinAmountOut = (
   };
 };
 
-export const findCurrencyId = async (
+export const getAssetInfo = async (
   tradeRouter: TradeRouter,
   currencySymbol: string,
-): Promise<string | undefined> => {
+): Promise<PoolAsset | undefined> => {
   const assets = await tradeRouter.getAllAssets();
-  return assets.find((asset: any) => asset.symbol === currencySymbol)?.id;
+  return assets.find((asset: any) => asset.symbol === currencySymbol);
 };

@@ -8,6 +8,7 @@ import { type AggregateDex } from '@acala-network/sdk-swap';
 import { FixedPointNumber, type Token } from '@acala-network/sdk-core';
 import { firstValueFrom } from 'rxjs';
 import { FEE_BUFFER } from '../../consts/consts';
+import { calculateTransactionFee } from '../../utils';
 
 export const createAcalaApiInstance = async (node: TNode): Promise<ApiPromise> => {
   const provider = new WsProvider(getNodeProvider(node) as any, 100);
@@ -26,6 +27,7 @@ export const calculateAcalaTransactionFee = async (
   tokenFrom: Token,
   tokenTo: Token,
   { amount, injectorAddress }: TSwapOptions,
+  toDestTransactionFee: BigNumber,
 ): Promise<BigNumber> => {
   const normalNumberAmount = new BigNumber(amount).shiftedBy(-tokenFrom.decimals).toNumber();
 
@@ -40,8 +42,9 @@ export const calculateAcalaTransactionFee = async (
 
   const txForFeeCalculation = dex.getTradingTx(feeCalculationResult) as unknown as Extrinsic;
 
-  const { partialFee } = await txForFeeCalculation.paymentInfo(injectorAddress);
-  const feeInNativeCurrency = new BigNumber(partialFee.toNumber());
+  const swapFee = await calculateTransactionFee(txForFeeCalculation, injectorAddress);
+  const swapFeeNativeCurrency = new BigNumber(swapFee.toNumber());
+  const feeInNativeCurrency = swapFeeNativeCurrency.plus(toDestTransactionFee);
   const nativeCurrency = wallet.consts.nativeCurrency;
 
   if (tokenFrom.symbol === nativeCurrency) return feeInNativeCurrency;

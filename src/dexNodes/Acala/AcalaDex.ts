@@ -10,8 +10,14 @@ import { calculateAcalaTransactionFee, createAcalaApiInstance } from './utils';
 import BigNumber from 'bignumber.js';
 
 class AcalaExchangeNode extends ExchangeNode {
-  async swapCurrency(api: ApiPromise, options: TSwapOptions): Promise<TSwapResult> {
+  async swapCurrency(
+    api: ApiPromise,
+    options: TSwapOptions,
+    toDestTransactionFee: BigNumber,
+  ): Promise<TSwapResult> {
     console.log('Swapping currency on Acala');
+
+    console.log('xcm fee', toDestTransactionFee.toString());
 
     const { currencyFrom, currencyTo, amount } = options;
 
@@ -37,6 +43,7 @@ class AcalaExchangeNode extends ExchangeNode {
       fromToken,
       toToken,
       options,
+      toDestTransactionFee,
     );
 
     console.log('feeInCurrencyFromBN', feeInCurrencyFromBN.toString());

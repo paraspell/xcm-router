@@ -8,9 +8,15 @@ import {
   TransactionStatus,
 } from './types';
 import createDexNodeInstance from './dexNodes/DexNodeFactory';
-import { createApiInstanceForNode, delay, submitTransaction } from './utils';
+import {
+  calculateTransactionFee,
+  createApiInstanceForNode,
+  delay,
+  submitTransaction,
+} from './utils';
 import { type ApiPromise } from '@polkadot/api';
 import type ExchangeNode from './dexNodes/DexNode';
+import BigNumber from 'bignumber.js';
 
 const maybeUpdateStatus = (
   onStatusChange: ((info: TTxProgressInfo) => void) | undefined,
@@ -26,7 +32,7 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
   const modifiedOptions: TTransferOptionsModified = { ...options, exchangeNode: exchangeNode.node };
   console.log('Executing transfer');
 
-  const { onStatusChange, originNode } = modifiedOptions;
+  const { onStatusChange, originNode, amount, injectorAddress } = modifiedOptions;
 
   if (options.type === TransactionType.TO_EXCHANGE) {
     maybeUpdateStatus(onStatusChange, {
@@ -46,7 +52,7 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
       status: TransactionStatus.IN_PROGRESS,
     });
     const swapApi = await exchangeNode.createApiInstance();
-    const { txHash } = await swap(swapApi, exchangeNode, modifiedOptions);
+    const { txHash } = await swap(swapApi, exchangeNode, modifiedOptions, new BigNumber(0));
     maybeUpdateStatus(onStatusChange, {
       type: TransactionType.SWAP,
       hashes: { [TransactionType.SWAP]: txHash },
@@ -83,7 +89,14 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
       status: TransactionStatus.IN_PROGRESS,
     });
     const swapApi = await exchangeNode.createApiInstance();
-    const { amountOut, txHash: txHashSwap } = await swap(swapApi, exchangeNode, modifiedOptions);
+    const toDestTx = buildFromExchangeExtrinsic(swapApi, modifiedOptions, amount);
+    const toDestTransactionFee = await calculateTransactionFee(toDestTx, injectorAddress);
+    const { amountOut, txHash: txHashSwap } = await swap(
+      swapApi,
+      exchangeNode,
+      modifiedOptions,
+      toDestTransactionFee,
+    );
     maybeUpdateStatus(onStatusChange, {
       type: TransactionType.SWAP,
       hashes: {
@@ -140,7 +153,7 @@ const buildToExchangeExtrinsic = (
     .build();
 };
 
-const buildFromExchangeExtrinsic = (
+export const buildFromExchangeExtrinsic = (
   api: ApiPromise,
   { destinationNode, exchangeNode, currencyTo, address }: TTransferOptionsModified,
   amountOut: string,
@@ -162,9 +175,10 @@ export const swap = async (
   api: ApiPromise,
   exchangeNode: ExchangeNode,
   options: TTransferOptionsModified,
+  toDestTransactionFee: BigNumber,
 ): Promise<{ amountOut: string; txHash: string }> => {
   const { signer, injectorAddress } = options;
-  const { tx, amountOut } = await exchangeNode.swapCurrency(api, options);
+  const { tx, amountOut } = await exchangeNode.swapCurrency(api, options, toDestTransactionFee);
   const txHash = await submitTransaction(api, tx, signer, injectorAddress);
   return { amountOut, txHash };
 };

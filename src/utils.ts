@@ -3,6 +3,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import { type Signer } from '@polkadot/api/types';
 import { type TNodeWithRelayChains } from './types';
 import { KUSAMA_WS, POLKADOT_WS } from './consts/consts';
+import BigNumber from 'bignumber.js';
 
 export const submitTransaction = async (
   api: ApiPromise,
@@ -55,4 +56,12 @@ export const getNodeProviderForAll = (node: TNodeWithRelayChains): string => {
 
 export const delay = async (ms: number): Promise<void> => {
   await new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+export const calculateTransactionFee = async (
+  tx: Extrinsic,
+  address: string,
+): Promise<BigNumber> => {
+  const { partialFee } = await tx.paymentInfo(address);
+  return new BigNumber(partialFee.toNumber());
 };

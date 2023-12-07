@@ -12,7 +12,7 @@ class HydraDxExchangeNode extends ExchangeNode {
     toDestTransactionFee: BigNumber,
   ): Promise<TSwapResult> {
     const { currencyFrom, currencyTo, slippagePct, amount } = options;
-    console.log('Swapping currency on HydraDX');
+    console.log(`Swapping currency on ${this.node}...`);
 
     const poolService = new PoolService(api);
     const tradeRouter = new TradeRouter(
@@ -48,7 +48,9 @@ class HydraDxExchangeNode extends ExchangeNode {
     );
     const amountWithoutFee = amountBnum.minus(tradeFee);
     const amountNormalized = amountWithoutFee.shiftedBy(-currencyFromDecimals);
-    console.log('amountNormalized', amountNormalized.toString());
+
+    console.log('Original amount', amount);
+    console.log('Amount modified', amountWithoutFee.toString());
 
     const trade = await tradeRouter.getBestSell(
       currencyFromInfo.id,

@@ -15,9 +15,7 @@ class AcalaExchangeNode extends ExchangeNode {
     options: TSwapOptions,
     toDestTransactionFee: BigNumber,
   ): Promise<TSwapResult> {
-    console.log('Swapping currency on Acala');
-
-    console.log('xcm fee', toDestTransactionFee.toString());
+    console.log(`Swapping currency on ${this.node}...`);
 
     const { currencyFrom, currencyTo, amount } = options;
 
@@ -46,11 +44,10 @@ class AcalaExchangeNode extends ExchangeNode {
       toDestTransactionFee,
     );
 
-    console.log('feeInCurrencyFromBN', feeInCurrencyFromBN.toString());
-
     const amountWithoutFee = amountBN.minus(feeInCurrencyFromBN);
 
-    console.log('amountWithoutFee', amountWithoutFee.toString());
+    console.log('Original amount', amount);
+    console.log('Amount modified', amountWithoutFee.toString());
 
     const tradeResult = await firstValueFrom(
       dex.swap({
@@ -69,8 +66,8 @@ class AcalaExchangeNode extends ExchangeNode {
     const amountOut = tradeResult.result.output.amount.toString();
     const amountOutBN = new BigNumber(amountOut).shiftedBy(toToken.decimals);
 
-    console.log(amountOutBN.toString());
-    console.log(toToken.decimals);
+    console.log('Calculated amount out:', amountOutBN.toString());
+    console.log('Amount out decimals', toToken.decimals);
 
     return { tx, amountOut: amountOutBN.toString() };
   }

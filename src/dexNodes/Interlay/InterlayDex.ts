@@ -11,7 +11,7 @@ class InterlayExchangeNode extends ExchangeNode {
   ): Promise<TSwapResult> {
     console.log('Swapping currency on Interlay');
 
-    const interBTC = await createInterBtcApi(getNodeProvider(this.node), 'mainnet');
+    const interBTC = await createInterBtcApi(getNodeProvider(this.node) as any, 'mainnet');
 
     let currency0;
     if (currencyFrom === 'DOT') {

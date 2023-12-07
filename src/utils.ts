@@ -49,7 +49,7 @@ export const getNodeProviderForAll = (node: TNodeWithRelayChains): string => {
   } else if (node === 'Kusama') {
     return KUSAMA_WS;
   } else {
-    return getNodeProvider(node);
+    return getNodeProvider(node) ?? '';
   }
 };
 

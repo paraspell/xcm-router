@@ -49,6 +49,9 @@ export const calculateFee = async (
   const swapFeeNativeCurrency = new BigNumber(swapFee.toNumber());
   const feeInNativeCurrency = swapFeeNativeCurrency.plus(toDestTransactionFee);
 
+  console.log('XCM fee:', toDestTransactionFee.toNumber());
+  console.log('Swap fee:', swapFee.toNumber());
+
   if (currencyFromInfo.symbol === nativeCurrencyInfo.symbol) return feeInNativeCurrency;
 
   const feeNativeCurrencyNormalNumber = feeInNativeCurrency.shiftedBy(-nativeCurrencyDecimals);

@@ -44,6 +44,9 @@ export const calculateAcalaTransactionFee = async (
 
   const swapFee = await calculateTransactionFee(txForFeeCalculation, injectorAddress);
   const swapFeeNativeCurrency = new BigNumber(swapFee.toNumber());
+  console.log('XCM fee:', toDestTransactionFee.toNumber());
+  console.log('Swap fee:', swapFee.toNumber());
+
   const feeInNativeCurrency = swapFeeNativeCurrency.plus(toDestTransactionFee);
   const nativeCurrency = wallet.consts.nativeCurrency;
 

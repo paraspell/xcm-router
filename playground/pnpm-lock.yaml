@@ -14,8 +14,8 @@ dependencies:
     specifier: file:./paraspell-sdk-3.0.9.tgz
     version: file:paraspell-sdk-3.0.9.tgz(@polkadot/api-base@10.11.1)(@polkadot/api@10.11.1)(@polkadot/apps-config@0.133.1)(@polkadot/types@10.11.1)(@polkadot/util@12.6.1)
   '@paraspell/xcm-router':
-    specifier: file:./paraspell-xcm-router-0.0.37.tgz
-    version: file:paraspell-xcm-router-0.0.37.tgz(@acala-network/types@6.0.4)(@polkadot/api-augment@10.11.1)(@polkadot/api-derive@10.11.1)(@polkadot/keyring@12.6.1)(@polkadot/rpc-augment@10.11.1)(@polkadot/rpc-core@10.11.1)(@polkadot/rpc-provider@10.11.1)(@polkadot/types-augment@10.11.1)(@polkadot/types-codec@10.11.1)(@polkadot/types-create@10.11.1)(@polkadot/types-known@10.11.1)(@polkadot/util-crypto@12.6.1)(ethers@5.7.2)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
+    specifier: file:./paraspell-xcm-router-0.0.38.tgz
+    version: file:paraspell-xcm-router-0.0.38.tgz(@acala-network/types@6.0.4)(@polkadot/api-augment@10.11.1)(@polkadot/api-derive@10.11.1)(@polkadot/keyring@12.6.1)(@polkadot/rpc-augment@10.11.1)(@polkadot/rpc-core@10.11.1)(@polkadot/rpc-provider@10.11.1)(@polkadot/types-augment@10.11.1)(@polkadot/types-codec@10.11.1)(@polkadot/types-create@10.11.1)(@polkadot/types-known@10.11.1)(@polkadot/util-crypto@12.6.1)(ethers@5.7.2)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
   '@polkadot/extension-dapp':
     specifier: ^0.46.6
     version: 0.46.6(@polkadot/api@10.11.1)(@polkadot/util-crypto@12.6.1)(@polkadot/util@12.6.1)
@@ -6387,9 +6387,9 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:paraspell-xcm-router-0.0.37.tgz(@acala-network/types@6.0.4)(@polkadot/api-augment@10.11.1)(@polkadot/api-derive@10.11.1)(@polkadot/keyring@12.6.1)(@polkadot/rpc-augment@10.11.1)(@polkadot/rpc-core@10.11.1)(@polkadot/rpc-provider@10.11.1)(@polkadot/types-augment@10.11.1)(@polkadot/types-codec@10.11.1)(@polkadot/types-create@10.11.1)(@polkadot/types-known@10.11.1)(@polkadot/util-crypto@12.6.1)(ethers@5.7.2)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-5jIfmhQmG3VWkDMH834CO6NKBVhcoEQ6kVc2fWwn8HSutB60SkSyzY7DAD0JGTmpkmlFZHSkjpne5+qH8b8gyQ==, tarball: file:paraspell-xcm-router-0.0.37.tgz}
-    id: file:paraspell-xcm-router-0.0.37.tgz
+  file:paraspell-xcm-router-0.0.38.tgz(@acala-network/types@6.0.4)(@polkadot/api-augment@10.11.1)(@polkadot/api-derive@10.11.1)(@polkadot/keyring@12.6.1)(@polkadot/rpc-augment@10.11.1)(@polkadot/rpc-core@10.11.1)(@polkadot/rpc-provider@10.11.1)(@polkadot/types-augment@10.11.1)(@polkadot/types-codec@10.11.1)(@polkadot/types-create@10.11.1)(@polkadot/types-known@10.11.1)(@polkadot/util-crypto@12.6.1)(ethers@5.7.2)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-8TVPK0DJHorN6dueEtdIf9DP8ry4vxvhWM03TFdIe81DfcTyqUTP0IfLWncjbja89Oi9YAZDe5ScExOOF67iKw==, tarball: file:paraspell-xcm-router-0.0.38.tgz}
+    id: file:paraspell-xcm-router-0.0.38.tgz
     name: '@paraspell/xcm-router'
     version: 0.0.1
     engines: {node: '>=16'}

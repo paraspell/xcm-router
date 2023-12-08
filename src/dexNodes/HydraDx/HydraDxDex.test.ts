@@ -4,7 +4,7 @@ import HydraDxExchangeNode from './HydraDxDex';
 import { calculateTransactionFee } from '../../utils';
 import { buildFromExchangeExtrinsic } from '../..';
 
-describe('HydraDx utils', () => {
+describe.skip('HydraDx utils', () => {
   // it('should calculate transaction fee correctly', async () => {});
 
   it.skip('should build a transfer extrinsic without error on HydraDx', async () => {

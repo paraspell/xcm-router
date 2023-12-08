@@ -51,10 +51,19 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
       type: TransactionType.SWAP,
       status: TransactionStatus.IN_PROGRESS,
     });
+    const originApi = await createApiInstanceForNode(originNode);
     const swapApi = await exchangeNode.createApiInstance();
     const toDestTx = buildFromExchangeExtrinsic(swapApi, modifiedOptions, amount);
     const toDestTransactionFee = await calculateTransactionFee(toDestTx, injectorAddress);
-    const { txHash } = await swap(swapApi, exchangeNode, modifiedOptions, toDestTransactionFee);
+    const toExchangeTx = buildToExchangeExtrinsic(originApi, modifiedOptions);
+    const toExchangeTransactionFee = await calculateTransactionFee(toExchangeTx, injectorAddress);
+    const { txHash } = await swap(
+      swapApi,
+      exchangeNode,
+      modifiedOptions,
+      toDestTransactionFee,
+      toExchangeTransactionFee,
+    );
     maybeUpdateStatus(onStatusChange, {
       type: TransactionType.SWAP,
       hashes: { [TransactionType.SWAP]: txHash },
@@ -91,13 +100,16 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
       status: TransactionStatus.IN_PROGRESS,
     });
     const swapApi = await exchangeNode.createApiInstance();
+    const toExchangeTx = buildToExchangeExtrinsic(originApi, modifiedOptions);
     const toDestTx = buildFromExchangeExtrinsic(swapApi, modifiedOptions, amount);
     const toDestTransactionFee = await calculateTransactionFee(toDestTx, injectorAddress);
+    const toExchangeTransactionFee = await calculateTransactionFee(toExchangeTx, injectorAddress);
     const { amountOut, txHash: txHashSwap } = await swap(
       swapApi,
       exchangeNode,
       modifiedOptions,
       toDestTransactionFee,
+      toExchangeTransactionFee,
     );
     maybeUpdateStatus(onStatusChange, {
       type: TransactionType.SWAP,
@@ -138,7 +150,7 @@ const validateCurrency = (originNode: TNodeWithRelayChains, currency: string): v
   }
 };
 
-const buildToExchangeExtrinsic = (
+export const buildToExchangeExtrinsic = (
   api: ApiPromise,
   { originNode, exchangeNode, currencyFrom, amount, injectorAddress }: TTransferOptionsModified,
 ): Extrinsic => {
@@ -178,9 +190,15 @@ export const swap = async (
   exchangeNode: ExchangeNode,
   options: TTransferOptionsModified,
   toDestTransactionFee: BigNumber,
+  toExchangeTransactionFee: BigNumber,
 ): Promise<{ amountOut: string; txHash: string }> => {
   const { signer, injectorAddress } = options;
-  const { tx, amountOut } = await exchangeNode.swapCurrency(api, options, toDestTransactionFee);
+  const { tx, amountOut } = await exchangeNode.swapCurrency(
+    api,
+    options,
+    toDestTransactionFee,
+    toExchangeTransactionFee,
+  );
   const txHash = await submitTransaction(api, tx, signer, injectorAddress);
   return { amountOut, txHash };
 };

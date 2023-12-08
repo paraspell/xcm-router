@@ -19,6 +19,7 @@ abstract class ExchangeNode {
     api: ApiPromise,
     options: TSwapOptions,
     toDestTransactionFee: BigNumber,
+    toExchangeTransactionFee: BigNumber,
   ): Promise<TSwapResult>;
 
   async createApiInstance(): Promise<ApiPromise> {

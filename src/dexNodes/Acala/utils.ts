@@ -1,6 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { options } from '@acala-network/api';
-import { type Extrinsic, getNodeProvider, type TNode } from '@paraspell/sdk';
+import { type Extrinsic, type TNode } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 import { type Wallet } from '@acala-network/sdk';
 import { type TSwapOptions } from '../../types';
@@ -11,7 +11,7 @@ import { FEE_BUFFER } from '../../consts/consts';
 import { calculateTransactionFee } from '../../utils';
 
 export const createAcalaApiInstance = async (node: TNode): Promise<ApiPromise> => {
-  const provider = new WsProvider(getNodeProvider(node) as any, 100);
+  const provider = new WsProvider('wss://acala-rpc-1.aca-api.network', 100);
   const api = new ApiPromise(
     options({
       provider,
@@ -19,6 +19,18 @@ export const createAcalaApiInstance = async (node: TNode): Promise<ApiPromise> =
   );
   await api.isReady;
   return api;
+};
+
+export const convertCurrency = async (
+  wallet: Wallet,
+  nativeCurrencySymbol: string,
+  otherCurrencySymbol: string,
+  otherCurrencyAmount: number,
+): Promise<number> => {
+  const nativeUsdPrice = (await wallet.getPrice(nativeCurrencySymbol)).toNumber();
+  const otherUsdPrice = (await wallet.getPrice(otherCurrencySymbol)).toNumber();
+  const feeInUsd = otherCurrencyAmount * nativeUsdPrice;
+  return feeInUsd / otherUsdPrice;
 };
 
 export const calculateAcalaTransactionFee = async (
@@ -45,14 +57,13 @@ export const calculateAcalaTransactionFee = async (
   const swapFee = await calculateTransactionFee(txForFeeCalculation, injectorAddress);
   const swapFeeNativeCurrency = new BigNumber(swapFee.toNumber());
 
-  const feeInNativeCurrency = swapFeeNativeCurrency
-    .plus(toDestTransactionFee)
-    .plus(toDestTransactionFee);
   const nativeCurrency = wallet.consts.nativeCurrency;
 
-  console.log('XCM to exch. fee:', swapFeeNativeCurrency.toString(), nativeCurrency);
-  console.log('XCM to dest. fee:', swapFeeNativeCurrency.toString(), nativeCurrency);
-  console.log('Swap fee:', swapFee.toString());
+  const feeInNativeCurrency = swapFeeNativeCurrency.plus(toDestTransactionFee);
+
+  console.log('XCM to dest. fee:', toDestTransactionFee.toString(), nativeCurrency);
+  console.log('Swap fee:', swapFeeNativeCurrency.toString(), nativeCurrency);
+  console.log('Total fee:', feeInNativeCurrency.toString(), nativeCurrency);
 
   if (tokenFrom.symbol === nativeCurrency) return feeInNativeCurrency;
 
@@ -62,14 +73,24 @@ export const calculateAcalaTransactionFee = async (
     .shiftedBy(-nativeCurrencyDecimals)
     .toNumber();
 
-  const nativeCurrencyUsdPrice = (await wallet.getPrice(nativeCurrency)).toNumber();
-  const currencyFromUsdPrice = (await wallet.getPrice(tokenFrom.symbol)).toNumber();
+  console.log('Total fee human:', convertedFeeNativeCurrency.toString(), nativeCurrency);
 
-  const feeInUsd = convertedFeeNativeCurrency * nativeCurrencyUsdPrice;
+  const feeInCurrencyFrom = await convertCurrency(
+    wallet,
+    nativeCurrency,
+    tokenFrom.symbol,
+    convertedFeeNativeCurrency,
+  );
 
-  const feeInCurrencyFrom = (feeInUsd / currencyFromUsdPrice) * FEE_BUFFER;
+  const feeInCurrencyFromWithBuffer = feeInCurrencyFrom * FEE_BUFFER;
 
-  const feeInCurrencyFromBN = new BigNumber(feeInCurrencyFrom).shiftedBy(tokenFrom.decimals);
+  console.log('Fee total currency from', feeInCurrencyFromWithBuffer.toString(), tokenFrom.symbol);
+
+  const feeInCurrencyFromBN = new BigNumber(feeInCurrencyFromWithBuffer).shiftedBy(
+    tokenFrom.decimals,
+  );
+
+  console.log('Fee total currency from BN', feeInCurrencyFromBN.toString(), tokenFrom.symbol);
 
   return feeInCurrencyFromBN;
 };

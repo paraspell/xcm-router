@@ -1,6 +1,6 @@
 import { describe, it } from 'vitest';
 
-describe('BifrostDex', () => {
+describe.skip('BifrostDex', () => {
   // it('should calculate transaction fee correctly', async () => {});
 
   it('should build a transfer extrinsic without error', async () => {

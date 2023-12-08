@@ -95,6 +95,10 @@ class AcalaExchangeNode extends ExchangeNode {
     const nativeCurrencyUsdPrice = (await wallet.getPrice(nativeCurrency)).toNumber();
     const currencyToUsdPrice = (await wallet.getPrice(toToken.symbol)).toNumber();
 
+    if (currencyToUsdPrice === 0) {
+      throw new Error(`Could not fetch price for ${toToken.symbol}`);
+    }
+
     const feeInUsd = convertedFeeNativeCurrency * nativeCurrencyUsdPrice;
 
     const feeInCurrencyTo = (feeInUsd / currencyToUsdPrice) * FEE_BUFFER;

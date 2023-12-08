@@ -29,6 +29,11 @@ export const convertCurrency = async (
 ): Promise<number> => {
   const nativeUsdPrice = (await wallet.getPrice(nativeCurrencySymbol)).toNumber();
   const otherUsdPrice = (await wallet.getPrice(otherCurrencySymbol)).toNumber();
+
+  if (otherUsdPrice === 0) {
+    throw new Error(`Could not fetch price for ${otherCurrencySymbol}`);
+  }
+
   const feeInUsd = otherCurrencyAmount * nativeUsdPrice;
   return feeInUsd / otherUsdPrice;
 };

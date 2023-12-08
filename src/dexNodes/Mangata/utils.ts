@@ -1,17 +1,16 @@
 import { type TokenInfo, type MangataInstance } from '@mangata-finance/sdk';
-import { BN } from '@polkadot/util';
+import BigNumber from 'bignumber.js';
 
-export const PCT_100 = new BN('100');
+export const PCT_100 = new BigNumber('100');
 
-export const calculateSlippage = (amount: BN, slippagePct: string): any => {
-  const slippage = amount.div(PCT_100).mul(new BN(slippagePct));
-  return slippage;
+export const calculateSlippage = (amount: BigNumber, slippagePct: string): any => {
+  const slippage = amount.div(PCT_100).multipliedBy(slippagePct);
+  return slippage.decimalPlaces(0, 1);
 };
 
-export const getMinAmountOut = (amountOut: BN, slippagePct: string): BN => {
+export const getMinAmountOut = (amountOut: BigNumber, slippagePct: string): BigNumber => {
   const slippage = calculateSlippage(amountOut, slippagePct);
-  const minAmountOut = amountOut.sub(slippage);
-  return minAmountOut;
+  return amountOut.minus(slippage);
 };
 
 export const getAssetInfo = async (

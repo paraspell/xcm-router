@@ -35,21 +35,25 @@ class MangataExchangeNode extends ExchangeNode {
 
     const amountWithoutFee = amountBN.multipliedBy(1 - MangataExchangeNode.FIXED_FEE);
 
-    const minAmountOut = getMinAmountOut(new BN(amountWithoutFee.toString()), slippagePct);
-
-    const args: MultiswapSellAsset = {
-      account: injectorAddress,
-      tokenIds: [assetFromInfo.id, assetToInfo.id],
-      amount: new BN(amountWithoutFee.toString()),
-      minAmountOut,
-    };
-    const tx = await mangata.submitableExtrinsic.multiswapSellAsset(args);
-
     const amountOut = await mangata.rpc.calculateSellPriceId(
       assetFromInfo.id,
       assetToInfo.id,
       new BN(amount),
     );
+
+    const minAmountOut = getMinAmountOut(new BigNumber(amountOut.toString()), slippagePct);
+
+    console.log('Original amount', amount);
+    console.log('Amount out', amountOut.toString());
+    console.log('Min amount out', minAmountOut.toString());
+
+    const args: MultiswapSellAsset = {
+      account: injectorAddress,
+      tokenIds: [assetFromInfo.id, assetToInfo.id],
+      amount: new BN(amountWithoutFee.toString()),
+      minAmountOut: new BN(minAmountOut.toString()),
+    };
+    const tx = await mangata.submitableExtrinsic.multiswapSellAsset(args);
 
     return {
       tx,

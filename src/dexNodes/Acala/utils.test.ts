@@ -5,14 +5,14 @@ import { calculateTransactionFee, createApiInstanceForNode } from '../../utils';
 import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from '../..';
 // import BigNumber from 'bignumber.js';
 
-describe.skip('Acala utils', () => {
+describe('Acala utils', () => {
   // it('should calculate transaction fee correctly', async () => {});
 
   it('should build a transfer extrinsic without error on Acala', async () => {
     const options: TSwapOptions = {
       currencyFrom: 'DOT',
-      currencyTo: 'INTR',
-      amount: '1000000000',
+      currencyTo: 'UNQ',
+      amount: '5000000000',
       slippagePct: '1',
       injectorAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
     };
@@ -21,7 +21,7 @@ describe.skip('Acala utils', () => {
     const swapApi = await dex.createApiInstance();
     const swapOptions = {
       ...options,
-      destinationNode: 'Interlay',
+      destinationNode: 'Unique',
       exchangeNode: 'Acala',
       originNode: 'Polkadot',
       address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',

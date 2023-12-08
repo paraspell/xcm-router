@@ -40,8 +40,8 @@ dependencies:
     specifier: ^2.1.1
     version: 2.1.1(@polkadot/api@10.11.1)(@polkadot/types@10.11.1)
   '@paraspell/sdk':
-    specifier: file:./paraspell-sdk-3.0.9.tgz
-    version: file:paraspell-sdk-3.0.9.tgz(@polkadot/api-base@10.11.1)(@polkadot/api@10.11.1)(@polkadot/apps-config@0.133.1)(@polkadot/types@10.11.1)(@polkadot/util@12.6.1)
+    specifier: file:./paraspell-sdk-3.0.11.tgz
+    version: file:paraspell-sdk-3.0.11.tgz(@polkadot/api-base@10.11.1)(@polkadot/api@10.11.1)(@polkadot/apps-config@0.133.1)(@polkadot/types@10.11.1)(@polkadot/util@12.6.1)
   '@polkadot/api':
     specifier: ^10.11.1
     version: 10.11.1
@@ -8016,9 +8016,9 @@ packages:
     engines: {node: '>=12.20'}
     dev: true
 
-  file:paraspell-sdk-3.0.9.tgz(@polkadot/api-base@10.11.1)(@polkadot/api@10.11.1)(@polkadot/apps-config@0.133.1)(@polkadot/types@10.11.1)(@polkadot/util@12.6.1):
-    resolution: {integrity: sha512-NV5gsbWQOfrfRdlwn5bFowgK7kJmzJ8LHo8t1drtmIi1Z3VrohU9Vv5eI7icLDEUtUNphE97V7zua8xiWxYVYA==, tarball: file:paraspell-sdk-3.0.9.tgz}
-    id: file:paraspell-sdk-3.0.9.tgz
+  file:paraspell-sdk-3.0.11.tgz(@polkadot/api-base@10.11.1)(@polkadot/api@10.11.1)(@polkadot/apps-config@0.133.1)(@polkadot/types@10.11.1)(@polkadot/util@12.6.1):
+    resolution: {integrity: sha512-sOQ2FyQvwcmnlVsdXoD6yZ6tq45XuA1Gb3YvnY+O4A+O4MgU7cF1uLqMS3drU69g7qzMhRuQflt8PF1Dl1aW/Q==, tarball: file:paraspell-sdk-3.0.11.tgz}
+    id: file:paraspell-sdk-3.0.11.tgz
     name: '@paraspell/sdk'
     version: 3.0.5
     peerDependencies:

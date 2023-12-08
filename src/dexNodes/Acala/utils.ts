@@ -1,6 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { options } from '@acala-network/api';
-import { type Extrinsic, type TNode } from '@paraspell/sdk';
+import { getNodeProvider, type Extrinsic, type TNode } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 import { type Wallet } from '@acala-network/sdk';
 import { type TSwapOptions } from '../../types';
@@ -11,7 +11,7 @@ import { FEE_BUFFER } from '../../consts/consts';
 import { calculateTransactionFee } from '../../utils';
 
 export const createAcalaApiInstance = async (node: TNode): Promise<ApiPromise> => {
-  const provider = new WsProvider('wss://acala-rpc-1.aca-api.network', 100);
+  const provider = new WsProvider(getNodeProvider(node) as any, 100);
   const api = new ApiPromise(
     options({
       provider,

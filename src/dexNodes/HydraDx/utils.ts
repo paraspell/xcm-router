@@ -46,7 +46,7 @@ export const calculateFee = async (
 
   const tx: Extrinsic = trade.toTx(minAmountOut.amount).get();
   const swapFee = await calculateTransactionFee(tx, injectorAddress);
-  const swapFeeNativeCurrency = new BigNumber(swapFee.toNumber());
+  const swapFeeNativeCurrency = new BigNumber(swapFee.toString());
   const feeInNativeCurrency = swapFeeNativeCurrency
     .plus(toDestTransactionFee)
     .plus(toDestTransactionFee);

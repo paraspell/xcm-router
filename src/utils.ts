@@ -63,5 +63,5 @@ export const calculateTransactionFee = async (
   address: string,
 ): Promise<BigNumber> => {
   const { partialFee } = await tx.paymentInfo(address);
-  return new BigNumber(partialFee.toNumber());
+  return new BigNumber(partialFee.toString());
 };

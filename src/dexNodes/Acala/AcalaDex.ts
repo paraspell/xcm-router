@@ -71,7 +71,7 @@ class AcalaExchangeNode extends ExchangeNode {
         source: 'aggregate',
         mode: 'EXACT_INPUT',
         input: new FixedPointNumber(
-          amountWithoutFee.shiftedBy(-fromToken.decimals).toNumber(),
+          amountWithoutFee.shiftedBy(-fromToken.decimals).toString(),
           fromToken.decimals,
         ),
       }),

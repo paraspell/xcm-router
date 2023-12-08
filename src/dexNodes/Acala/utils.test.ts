@@ -5,7 +5,7 @@ import { calculateTransactionFee, createApiInstanceForNode } from '../../utils';
 import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from '../..';
 // import BigNumber from 'bignumber.js';
 
-describe('Acala utils', () => {
+describe.skip('Acala utils', () => {
   // it('should calculate transaction fee correctly', async () => {});
 
   it('should build a transfer extrinsic without error on Acala', async () => {

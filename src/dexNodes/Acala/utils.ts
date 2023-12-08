@@ -41,7 +41,7 @@ export const calculateAcalaTransactionFee = async (
   { amount, injectorAddress }: TSwapOptions,
   toDestTransactionFee: BigNumber,
 ): Promise<BigNumber> => {
-  const normalNumberAmount = new BigNumber(amount).shiftedBy(-tokenFrom.decimals).toNumber();
+  const normalNumberAmount = new BigNumber(amount).shiftedBy(-tokenFrom.decimals).toString();
 
   const feeCalculationResult = await firstValueFrom(
     dex.swap({
@@ -55,7 +55,7 @@ export const calculateAcalaTransactionFee = async (
   const txForFeeCalculation = dex.getTradingTx(feeCalculationResult) as unknown as Extrinsic;
 
   const swapFee = await calculateTransactionFee(txForFeeCalculation, injectorAddress);
-  const swapFeeNativeCurrency = new BigNumber(swapFee.toNumber());
+  const swapFeeNativeCurrency = new BigNumber(swapFee.toString());
 
   const nativeCurrency = wallet.consts.nativeCurrency;
 

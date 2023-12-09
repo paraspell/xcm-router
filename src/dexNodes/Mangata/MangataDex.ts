@@ -2,11 +2,16 @@ import { InvalidCurrencyError } from '@paraspell/sdk';
 import ExchangeNode from '../DexNode';
 import { BN } from '@polkadot/util';
 import { type TSwapResult, type TSwapOptions } from '../../types';
-import { getAssetInfo, getMinAmountOut } from './utils';
+import { getAssetInfo } from './utils';
 import { type ApiPromise } from '@polkadot/api';
-import { Mangata, type MangataInstance, type MultiswapSellAsset } from '@mangata-finance/sdk';
-import BigNumber from 'bignumber.js';
+import {
+  BN_HUNDRED,
+  Mangata,
+  type MangataInstance,
+  type MultiswapSellAsset,
+} from '@mangata-finance/sdk';
 import { FEE_BUFFER } from '../../consts/consts';
+import { getAllPools, routeExactIn } from './routingUtils';
 
 class MangataExchangeNode extends ExchangeNode {
   constructor() {
@@ -18,7 +23,7 @@ class MangataExchangeNode extends ExchangeNode {
   async swapCurrency(api: ApiPromise, options: TSwapOptions): Promise<TSwapResult> {
     console.log('Swapping currency on Mangata');
 
-    const { currencyFrom, currencyTo, amount, slippagePct, injectorAddress } = options;
+    const { currencyFrom, currencyTo, amount, injectorAddress } = options;
 
     const mangata: MangataInstance = Mangata.instance(['wss://kusama-archive.mangata.online']);
 
@@ -31,33 +36,32 @@ class MangataExchangeNode extends ExchangeNode {
       throw new InvalidCurrencyError("Currency to doesn't exist");
     }
 
-    const amountBN = new BigNumber(amount);
+    const allPools = await getAllPools(mangata);
+    const res = routeExactIn(allPools, assetFromInfo, assetToInfo, new BN(amount), true);
 
-    const amountWithoutFee = amountBN.multipliedBy(1 - MangataExchangeNode.FIXED_FEE);
+    if (res.bestRoute === null || res.bestAmount === null) {
+      throw new Error('Swap route is null');
+    }
 
-    const amountOut = await mangata.rpc.calculateSellPriceId(
-      assetFromInfo.id,
-      assetToInfo.id,
-      new BN(amount),
-    );
+    const MAX_SLIPPAGE = 1;
 
-    const minAmountOut = getMinAmountOut(new BigNumber(amountOut.toString()), slippagePct);
+    const minAmountOutBN = res.bestAmount.mul(new BN(100 - MAX_SLIPPAGE)).div(BN_HUNDRED);
 
     console.log('Original amount', amount);
-    console.log('Amount out', amountOut.toString());
-    console.log('Min amount out', minAmountOut.toString());
+    console.log('Best amount', res.bestAmount.toString());
+    console.log('Min Amount out', minAmountOutBN.toString());
 
     const args: MultiswapSellAsset = {
       account: injectorAddress,
-      tokenIds: [assetFromInfo.id, assetToInfo.id],
-      amount: new BN(amountWithoutFee.toString()),
-      minAmountOut: new BN(minAmountOut.toString()),
+      tokenIds: res.bestRoute.map((item) => item.id),
+      amount: new BN(amount),
+      minAmountOut: minAmountOutBN,
     };
     const tx = await mangata.submitableExtrinsic.multiswapSellAsset(args);
 
     return {
       tx,
-      amountOut: amountOut.toString(),
+      amountOut: res.bestAmount.toString(),
     };
   }
 }

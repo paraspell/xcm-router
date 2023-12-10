@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
+
+/*
+Code partially inspired by https://app.mangata.finance/
+*/
+
 import {
   type PoolWithRatio as SdkPoolWithRatio,
   BN_ZERO,

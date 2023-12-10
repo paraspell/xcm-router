@@ -1,8 +1,32 @@
-import { getNodeProvider, getAssetId } from '@paraspell/sdk';
+import { getNodeProvider, getAssetId, type TNode } from '@paraspell/sdk';
 import ExchangeNode from '../DexNode';
 import { type TSwapResult, type TSwapOptions } from '../../types';
-import { createInterBtcApi, getAllTradingPairs, newMonetaryAmount } from '@interlay/interbtc-api';
+import {
+  createInterBtcApi,
+  getAllTradingPairs,
+  newMonetaryAmount,
+  type CurrencyExt,
+  type InterBtcApi,
+} from '@interlay/interbtc-api';
 import { type ApiPromise } from '@polkadot/api';
+
+const getCurrency = async (
+  symbol: string,
+  interBTC: InterBtcApi,
+  node: TNode,
+): Promise<CurrencyExt | null> => {
+  if (symbol === 'DOT') {
+    return interBTC.getGovernanceCurrency();
+  } else if (symbol === 'INTR') {
+    return interBTC.getRelayChainCurrency();
+  } else if (symbol === 'IBTC') {
+    return interBTC.getWrappedCurrency();
+  } else {
+    const id = getAssetId(node, symbol);
+    if (id === null) return null;
+    return await interBTC.assetRegistry.getForeignAsset(Number(id));
+  }
+};
 
 class InterlayExchangeNode extends ExchangeNode {
   async swapCurrency(
@@ -13,31 +37,23 @@ class InterlayExchangeNode extends ExchangeNode {
 
     const interBTC = await createInterBtcApi(getNodeProvider(this.node) as any, 'mainnet');
 
-    let currency0;
-    if (currencyFrom === 'DOT') {
-      currency0 = interBTC.getGovernanceCurrency();
-    } else {
-      const currencyFromId = Number(getAssetId(this.node, currencyFrom));
-      currency0 = await interBTC.assetRegistry.getForeignAsset(currencyFromId);
+    const assetFrom = await getCurrency(currencyFrom, interBTC, this.node);
+
+    if (assetFrom === null) {
+      throw new Error('Currency from is invalid.');
     }
 
-    let currency1;
-    if (currencyTo === 'IBTC') {
-      currency1 = interBTC.getRelayChainCurrency();
-    } else {
-      const currencyToId = Number(getAssetId(this.node, currencyTo));
-      currency1 = await interBTC.assetRegistry.getForeignAsset(currencyToId);
+    const assetTo = await getCurrency(currencyFrom, interBTC, this.node);
+
+    if (assetTo === null) {
+      throw new Error('Currency to is invalid.');
     }
 
-    const inputAmount = newMonetaryAmount(1, currency0);
+    const inputAmount = newMonetaryAmount(amount, assetFrom);
 
     const liquidityPools = await interBTC.amm.getLiquidityPools();
 
-    const pairs = getAllTradingPairs(liquidityPools);
-
-    console.log(pairs);
-
-    const trade = interBTC.amm.getOptimalTrade(inputAmount, currency1, liquidityPools);
+    const trade = interBTC.amm.getOptimalTrade(inputAmount, assetTo, liquidityPools);
 
     if (trade === null) {
       throw new Error('No trade found');

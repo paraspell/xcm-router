@@ -8,8 +8,8 @@ describe('InterlayDex', () => {
   it('should build a transfer extrinsic without error', async () => {
     const options: TSwapOptions = {
       currencyFrom: 'DOT',
-      currencyTo: 'VDOT',
-      amount: '10000000000',
+      currencyTo: 'USDT',
+      amount: '1000000000',
       slippagePct: '1',
       injectorAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
     };

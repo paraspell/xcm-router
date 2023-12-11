@@ -1,9 +1,8 @@
-import { getNodeProvider, getAssetId, type TNode } from '@paraspell/sdk';
+import { getAssetId, type TNode } from '@paraspell/sdk';
 import ExchangeNode from '../DexNode';
 import { type TSwapResult, type TSwapOptions } from '../../types';
 import {
   createInterBtcApi,
-  getAllTradingPairs,
   newMonetaryAmount,
   type CurrencyExt,
   type InterBtcApi,
@@ -16,9 +15,9 @@ const getCurrency = async (
   node: TNode,
 ): Promise<CurrencyExt | null> => {
   if (symbol === 'DOT') {
-    return interBTC.getGovernanceCurrency();
-  } else if (symbol === 'INTR') {
     return interBTC.getRelayChainCurrency();
+  } else if (symbol === 'INTR') {
+    return interBTC.getGovernanceCurrency();
   } else if (symbol === 'IBTC') {
     return interBTC.getWrappedCurrency();
   } else {
@@ -35,7 +34,7 @@ class InterlayExchangeNode extends ExchangeNode {
   ): Promise<TSwapResult> {
     console.log('Swapping currency on Interlay');
 
-    const interBTC = await createInterBtcApi(getNodeProvider(this.node) as any, 'mainnet');
+    const interBTC = await createInterBtcApi('wss://api.interlay.io/parachain', 'mainnet');
 
     const assetFrom = await getCurrency(currencyFrom, interBTC, this.node);
 
@@ -43,12 +42,11 @@ class InterlayExchangeNode extends ExchangeNode {
       throw new Error('Currency from is invalid.');
     }
 
-    const assetTo = await getCurrency(currencyFrom, interBTC, this.node);
+    const assetTo = await getCurrency(currencyTo, interBTC, this.node);
 
     if (assetTo === null) {
       throw new Error('Currency to is invalid.');
     }
-
     const inputAmount = newMonetaryAmount(amount, assetFrom);
 
     const liquidityPools = await interBTC.amm.getLiquidityPools();
@@ -64,7 +62,12 @@ class InterlayExchangeNode extends ExchangeNode {
     const deadline = 999999;
 
     const trade1 = interBTC.amm.swap(trade, outputAmount, injectorAddress, deadline);
-    return trade1.extrinsic as any;
+    const extrinsic: any = trade1.extrinsic;
+
+    return {
+      tx: extrinsic,
+      amountOut: outputAmount.toString(),
+    };
   }
 }
 

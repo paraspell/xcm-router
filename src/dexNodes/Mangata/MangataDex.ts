@@ -38,7 +38,12 @@ class MangataExchangeNode extends ExchangeNode {
     }
 
     const amountBN = new BigNumber(amount);
-    const amountWithoutFee = amountBN.multipliedBy(1 - MangataExchangeNode.FIXED_FEE);
+    const amountWithoutFee = amountBN
+      .multipliedBy(1 - MangataExchangeNode.FIXED_FEE)
+      .decimalPlaces(0);
+
+    console.log('Original amount', amount);
+    console.log('Amount without fee', amountWithoutFee.toString());
 
     const allPools = await getAllPools(mangata);
     const res = routeExactIn(
@@ -57,8 +62,6 @@ class MangataExchangeNode extends ExchangeNode {
 
     const minAmountOutBN = res.bestAmount.mul(new BN(100 - MAX_SLIPPAGE)).div(BN_HUNDRED);
 
-    console.log('Original amount', amount);
-    console.log('Amount without fee', amountWithoutFee.toString());
     console.log('Best amount', res.bestAmount.toString());
     console.log('Min Amount out', minAmountOutBN.toString());
 

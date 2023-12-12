@@ -1267,9 +1267,9 @@
   dependencies:
     ethers "^5.7.1"
 
-"@paraspell/xcm-router@file:./paraspell-xcm-router-v0.0.52.tgz":
+"@paraspell/xcm-router@file:./paraspell-xcm-router-v0.0.53.tgz":
   version "0.0.1"
-  resolved "file:./paraspell-xcm-router-v0.0.52.tgz#6095e8dc4f28f30a92f291ec756a16136a72be19"
+  resolved "file:./paraspell-xcm-router-v0.0.53.tgz#74e1c2458052d9d2da72aef92098d8a7154176e4"
   dependencies:
     "@acala-network/api" "^6.0.4"
     "@acala-network/app-util" "^4.1.5"

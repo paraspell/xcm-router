@@ -8,6 +8,7 @@ import {
   type InterBtcApi,
 } from '@interlay/interbtc-api';
 import { type ApiPromise } from '@polkadot/api';
+import { BN } from '@polkadot/util';
 
 const getCurrency = async (
   symbol: string,
@@ -59,9 +60,10 @@ class InterlayExchangeNode extends ExchangeNode {
 
     const outputAmount = trade.getMinimumOutputAmount(Number(slippagePct));
 
-    const deadline = 999999;
-
-    const trade1 = interBTC.amm.swap(trade, outputAmount, injectorAddress, deadline);
+    const currentBlock = await api.query.system.number();
+    const deadline = currentBlock.add(new BN(150));
+    
+    const trade1 = interBTC.amm.swap(trade, outputAmount, injectorAddress, deadline.toString());
     const extrinsic: any = trade1.extrinsic;
 
     return {

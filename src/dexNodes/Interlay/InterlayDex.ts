@@ -17,9 +17,9 @@ const getCurrency = async (
   interBTC: InterBtcApi,
   node: TNode,
 ): Promise<CurrencyExt | null> => {
-  if (symbol === 'DOT') {
+  if (symbol === 'DOT' || symbol === 'KSM') {
     return interBTC.getRelayChainCurrency();
-  } else if (symbol === 'INTR') {
+  } else if (symbol === 'INTR' || symbol === 'KINT') {
     return interBTC.getGovernanceCurrency();
   } else if (symbol === 'IBTC') {
     return interBTC.getWrappedCurrency();

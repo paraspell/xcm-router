@@ -10,15 +10,12 @@ import {
   type MangataInstance,
   type MultiswapSellAsset,
 } from '@mangata-finance/sdk';
-import { FEE_BUFFER } from '../../consts/consts';
 import { getAllPools, routeExactIn } from './routingUtils';
 
 class MangataExchangeNode extends ExchangeNode {
   constructor() {
     super('Mangata');
   }
-
-  private static readonly FIXED_FEE = 0.03 * FEE_BUFFER;
 
   async swapCurrency(api: ApiPromise, options: TSwapOptions): Promise<TSwapResult> {
     console.log('Swapping currency on Mangata');

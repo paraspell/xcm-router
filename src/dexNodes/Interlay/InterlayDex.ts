@@ -9,6 +9,8 @@ import {
 } from '@interlay/interbtc-api';
 import { type ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
+import BigNumber from 'bignumber.js';
+import { FEE_BUFFER } from '../../consts/consts';
 
 const getCurrency = async (
   symbol: string,
@@ -32,6 +34,8 @@ class InterlayExchangeNode extends ExchangeNode {
   async swapCurrency(
     api: ApiPromise,
     { injectorAddress, currencyFrom, currencyTo, amount, slippagePct }: TSwapOptions,
+    toDestTransactionFee: BigNumber,
+    toExchangeTransactionFee: BigNumber,
   ): Promise<TSwapResult> {
     console.log('Swapping currency on Interlay');
 
@@ -48,7 +52,17 @@ class InterlayExchangeNode extends ExchangeNode {
     if (assetTo === null) {
       throw new Error('Currency to is invalid.');
     }
-    const inputAmount = newMonetaryAmount(amount, assetFrom);
+
+    const amountBN = new BigNumber(amount);
+
+    const toExchangeFeeWithBuffer = toExchangeTransactionFee.multipliedBy(FEE_BUFFER);
+
+    const amountWithoutFee = amountBN.minus(toExchangeFeeWithBuffer);
+
+    console.log('Original amount', amount);
+    console.log('Amount without fee', amountWithoutFee.toString());
+
+    const inputAmount = newMonetaryAmount(amountWithoutFee.toString(), assetFrom);
 
     const liquidityPools = await interBTC.amm.getLiquidityPools();
 
@@ -65,10 +79,10 @@ class InterlayExchangeNode extends ExchangeNode {
     
     const trade1 = interBTC.amm.swap(trade, outputAmount, injectorAddress, deadline.toString());
     const extrinsic: any = trade1.extrinsic;
-
+  
     return {
       tx: extrinsic,
-      amountOut: outputAmount.toString(),
+      amountOut: trade.outputAmount.toString(true),
     };
   }
 }

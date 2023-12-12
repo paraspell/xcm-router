@@ -1260,16 +1260,17 @@
   dependencies:
     "@open-web3/orml-type-definitions" "^2.0.1"
 
-"@paraspell/sdk@^3.0.6":
-  version "3.0.6"
-  resolved "https://registry.yarnpkg.com/@paraspell/sdk/-/sdk-3.0.6.tgz#42d1a6fec50272c0458dda6668e2b91e502cbb78"
-  integrity sha512-nI/NGIfhZKBsI5iJlulWGub7a26pZNNGlzKL1Dp6gv+QQGhrqJrZ4PI8Y324E7a1pAII3Q/SwThWFkP+KBrYuA==
+"@paraspell/sdk@^3.0.7":
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/@paraspell/sdk/-/sdk-3.0.7.tgz#73e4ca4309cb94d7374e6e4aebdf9dddaa81920d"
+  integrity sha512-ufuzgYAuHpuy5CfDCErD3rrPXGnVc52gFDGCJsupO85S9aWvNzWr88U/rb4OmrwSfpCOs8JTeOn8Ne6f15eDag==
   dependencies:
+    "@mangata-finance/sdk" "^2.1.1"
     ethers "^5.7.1"
 
-"@paraspell/xcm-router@file:./paraspell-xcm-router-v0.0.58.tgz":
+"@paraspell/xcm-router@file:./paraspell-xcm-router-v0.0.59.tgz":
   version "0.0.1"
-  resolved "file:./paraspell-xcm-router-v0.0.58.tgz#8feeaff571c9100000e97e427be83688dea10fbb"
+  resolved "file:./paraspell-xcm-router-v0.0.59.tgz#93661e6b65484d875aebdceb5ed33d3c9bfe4bb1"
   dependencies:
     "@acala-network/api" "^6.0.4"
     "@acala-network/app-util" "^4.1.5"
@@ -1281,7 +1282,7 @@
     "@galacticcouncil/sdk" "^0.7.7"
     "@interlay/interbtc-api" "^2.6.0"
     "@mangata-finance/sdk" "^2.1.1"
-    "@paraspell/sdk" "^3.0.6"
+    "@paraspell/sdk" "^3.0.7"
     "@polkadot/api" "^10.11.1"
     "@polkadot/api-base" "^10.11.1"
     "@polkadot/apps-config" "^0.133.1"

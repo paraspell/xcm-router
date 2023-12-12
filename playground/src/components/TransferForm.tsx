@@ -1,14 +1,9 @@
 import { useForm } from '@mantine/form';
-import {
-  EXCHANGE_NODES,
-  NODES_WITH_RELAY_CHAIN,
-  TExchangeNode,
-  TNodeWithRelayChains,
-  TransactionType,
-} from '@paraspell/xcm-router';
+import { EXCHANGE_NODES, TExchangeNode, TransactionType } from '@paraspell/xcm-router';
 import { isValidWalletAddress } from '../utils';
 import { FC } from 'react';
 import { Button, Select, Stack, TextInput } from '@mantine/core';
+import { NODES_WITH_RELAY_CHAINS, TNodeWithRelayChains } from '@paraspell/sdk';
 
 export type FormValues = {
   originNode: TNodeWithRelayChains;
@@ -52,7 +47,7 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
         <Select
           label="Origin node"
           placeholder="Pick value"
-          data={[...NODES_WITH_RELAY_CHAIN]}
+          data={[...NODES_WITH_RELAY_CHAINS]}
           searchable
           required
           {...form.getInputProps('originNode')}
@@ -70,7 +65,7 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
         <Select
           label="Destination node"
           placeholder="Pick value"
-          data={[...NODES_WITH_RELAY_CHAIN]}
+          data={[...NODES_WITH_RELAY_CHAINS]}
           searchable
           required
           {...form.getInputProps('destinationNode')}

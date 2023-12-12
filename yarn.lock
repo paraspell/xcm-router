@@ -1917,11 +1917,12 @@
   dependencies:
     "@open-web3/orml-type-definitions" "^2.0.1"
 
-"@paraspell/sdk@^3.0.6":
-  version "3.0.6"
-  resolved "https://registry.yarnpkg.com/@paraspell/sdk/-/sdk-3.0.6.tgz#42d1a6fec50272c0458dda6668e2b91e502cbb78"
-  integrity sha512-nI/NGIfhZKBsI5iJlulWGub7a26pZNNGlzKL1Dp6gv+QQGhrqJrZ4PI8Y324E7a1pAII3Q/SwThWFkP+KBrYuA==
+"@paraspell/sdk@^3.0.7":
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/@paraspell/sdk/-/sdk-3.0.7.tgz#73e4ca4309cb94d7374e6e4aebdf9dddaa81920d"
+  integrity sha512-ufuzgYAuHpuy5CfDCErD3rrPXGnVc52gFDGCJsupO85S9aWvNzWr88U/rb4OmrwSfpCOs8JTeOn8Ne6f15eDag==
   dependencies:
+    "@mangata-finance/sdk" "^2.1.1"
     ethers "^5.7.1"
 
 "@peaqnetwork/type-definitions@0.0.4":

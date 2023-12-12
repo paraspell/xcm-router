@@ -1,8 +1,6 @@
-import { type Extrinsic, getNodeProvider } from '@paraspell/sdk';
-import { ApiPromise, WsProvider } from '@polkadot/api';
+import { type Extrinsic } from '@paraspell/sdk';
+import { type ApiPromise } from '@polkadot/api';
 import { type Signer } from '@polkadot/api/types';
-import { type TNodeWithRelayChains } from './types';
-import { KUSAMA_WS, POLKADOT_WS } from './consts/consts';
 import BigNumber from 'bignumber.js';
 
 export const submitTransaction = async (
@@ -32,26 +30,6 @@ export const submitTransaction = async (
       }
     });
   });
-};
-
-export const createApiInstance = async (wsUrl: string): Promise<ApiPromise> => {
-  const wsProvider = new WsProvider(wsUrl);
-  return await ApiPromise.create({ provider: wsProvider });
-};
-
-export const createApiInstanceForNode = async (node: TNodeWithRelayChains): Promise<ApiPromise> => {
-  const endpoint = getNodeProviderForAll(node);
-  return await createApiInstance(endpoint);
-};
-
-export const getNodeProviderForAll = (node: TNodeWithRelayChains): string => {
-  if (node === 'Polkadot') {
-    return POLKADOT_WS;
-  } else if (node === 'Kusama') {
-    return KUSAMA_WS;
-  } else {
-    return getNodeProvider(node) ?? '';
-  }
 };
 
 export const delay = async (ms: number): Promise<void> => {

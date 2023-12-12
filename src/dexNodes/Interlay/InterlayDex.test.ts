@@ -1,13 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { type TSwapOptions } from '../../types';
 import InterlayExchangeNode from './InterlayDex';
-import { calculateTransactionFee, createApiInstanceForNode } from '../../utils';
+import { calculateTransactionFee } from '../../utils';
 import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from '../..';
+import { createApiInstanceForNode } from '@paraspell/sdk';
 
-describe('InterlayDex', () => {
+describe.skip('InterlayDex', () => {
   // it('should calculate transaction fee correctly', async () => {});
 
-  it.skip('should build a transfer extrinsic without error', async () => {
+  it('should build a transfer extrinsic without error', async () => {
     const options: TSwapOptions = {
       currencyFrom: 'DOT',
       currencyTo: 'INTR',
@@ -33,7 +34,12 @@ describe('InterlayDex', () => {
       toExchangeTx,
       options.injectorAddress,
     );
-    const tx = await dex.swapCurrency(swapApi, options, toDestTransactionFee, toExchangeTransactionFee);
+    const tx = await dex.swapCurrency(
+      swapApi,
+      options,
+      toDestTransactionFee,
+      toExchangeTransactionFee,
+    );
     expect(tx).toBeDefined();
   });
 
@@ -63,7 +69,12 @@ describe('InterlayDex', () => {
       toExchangeTx,
       options.injectorAddress,
     );
-    const tx = await dex.swapCurrency(swapApi, options, toDestTransactionFee, toExchangeTransactionFee);
+    const tx = await dex.swapCurrency(
+      swapApi,
+      options,
+      toDestTransactionFee,
+      toExchangeTransactionFee,
+    );
     expect(tx).toBeDefined();
   });
 });

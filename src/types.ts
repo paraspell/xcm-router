@@ -1,6 +1,6 @@
-import { type Extrinsic, type TNode } from '@paraspell/sdk';
+import { type TNodeWithRelayChains, type Extrinsic, type TNode } from '@paraspell/sdk';
 import { type Signer } from '@polkadot/types/types';
-import { type NODES_WITH_RELAY_CHAIN, type EXCHANGE_NODES } from './consts/consts';
+import { type EXCHANGE_NODES } from './consts/consts';
 
 export type TBigNumber = string | number | bigint;
 
@@ -18,8 +18,6 @@ export interface TSwapResult {
   tx: Extrinsic;
   amountOut: string;
 }
-
-export type TNodeWithRelayChains = (typeof NODES_WITH_RELAY_CHAIN)[number];
 
 export enum TransactionType {
   TO_EXCHANGE = 'TO_EXCHANGE',

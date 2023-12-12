@@ -1,19 +1,19 @@
-import { Builder, type Extrinsic, InvalidCurrencyError } from '@paraspell/sdk';
+import {
+  Builder,
+  type Extrinsic,
+  InvalidCurrencyError,
+  createApiInstanceForNode,
+  type TNodeWithRelayChains,
+} from '@paraspell/sdk';
 import {
   TransactionType,
   type TTransferOptionsModified,
-  type TNodeWithRelayChains,
   type TTransferOptions,
   type TTxProgressInfo,
   TransactionStatus,
 } from './types';
 import createDexNodeInstance from './dexNodes/DexNodeFactory';
-import {
-  calculateTransactionFee,
-  createApiInstanceForNode,
-  delay,
-  submitTransaction,
-} from './utils';
+import { calculateTransactionFee, delay, submitTransaction } from './utils';
 import { type ApiPromise } from '@polkadot/api';
 import type ExchangeNode from './dexNodes/DexNode';
 import type BigNumber from 'bignumber.js';

@@ -76,7 +76,7 @@
     "@galacticcouncil/sdk": "^0.7.7",
     "@interlay/interbtc-api": "^2.6.0",
     "@mangata-finance/sdk": "^2.1.1",
-    "@paraspell/sdk": "^3.0.6",
+    "@paraspell/sdk": "^3.0.7",
     "@polkadot/api": "^10.11.1",
     "@polkadot/api-base": "^10.11.1",
     "@polkadot/apps-config": "^0.133.1",

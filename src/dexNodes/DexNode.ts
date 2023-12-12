@@ -1,7 +1,6 @@
-import { type TNode } from '@paraspell/sdk';
+import { createApiInstanceForNode, type TNode } from '@paraspell/sdk';
 import { type TSwapResult, type TSwapOptions } from '../types';
 import { type ApiPromise } from '@polkadot/api';
-import { createApiInstanceForNode } from '../utils';
 import type BigNumber from 'bignumber.js';
 
 abstract class ExchangeNode {

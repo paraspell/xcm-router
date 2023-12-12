@@ -21,7 +21,7 @@ const getCurrency = async (
     return interBTC.getRelayChainCurrency();
   } else if (symbol === 'INTR' || symbol === 'KINT') {
     return interBTC.getGovernanceCurrency();
-  } else if (symbol === 'IBTC') {
+  } else if (symbol === 'IBTC' || symbol === 'KBTC') {
     return interBTC.getWrappedCurrency();
   } else {
     const id = getAssetId(node, symbol);

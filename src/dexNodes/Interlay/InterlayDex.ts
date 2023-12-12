@@ -1,4 +1,4 @@
-import { getAssetId, type TNode } from '@paraspell/sdk';
+import { getAssetId, getNodeProvider, type TNode } from '@paraspell/sdk';
 import ExchangeNode from '../DexNode';
 import { type TSwapResult, type TSwapOptions } from '../../types';
 import {
@@ -34,7 +34,7 @@ class InterlayExchangeNode extends ExchangeNode {
   ): Promise<TSwapResult> {
     console.log('Swapping currency on Interlay');
 
-    const interBTC = await createInterBtcApi('wss://api.interlay.io/parachain', 'mainnet');
+    const interBTC = await createInterBtcApi(getNodeProvider(this.node) as string, 'mainnet');
 
     const assetFrom = await getCurrency(currencyFrom, interBTC, this.node);
 

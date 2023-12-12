@@ -9,7 +9,7 @@ describe('Mangata DEX', () => {
     const options: TSwapOptions = {
       currencyFrom: 'KSM',
       currencyTo: 'BNC',
-      amount: '2364959083',
+      amount: '200000000000',
       slippagePct: '1',
       injectorAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
     };

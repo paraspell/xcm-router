@@ -11,11 +11,15 @@ import {
   type MultiswapSellAsset,
 } from '@mangata-finance/sdk';
 import { getAllPools, routeExactIn } from './routingUtils';
+import { FEE_BUFFER } from '../../consts/consts';
+import BigNumber from 'bignumber.js';
 
 class MangataExchangeNode extends ExchangeNode {
   constructor() {
     super('Mangata');
   }
+
+  private static readonly FIXED_FEE = 0.03 * FEE_BUFFER;
 
   async swapCurrency(api: ApiPromise, options: TSwapOptions): Promise<TSwapResult> {
     console.log('Swapping currency on Mangata');
@@ -33,8 +37,17 @@ class MangataExchangeNode extends ExchangeNode {
       throw new InvalidCurrencyError("Currency to doesn't exist");
     }
 
+    const amountBN = new BigNumber(amount);
+    const amountWithoutFee = amountBN.multipliedBy(1 - MangataExchangeNode.FIXED_FEE);
+
     const allPools = await getAllPools(mangata);
-    const res = routeExactIn(allPools, assetFromInfo, assetToInfo, new BN(amount), true);
+    const res = routeExactIn(
+      allPools,
+      assetFromInfo,
+      assetToInfo,
+      new BN(amountWithoutFee.toString()),
+      true,
+    );
 
     if (res.bestRoute === null || res.bestAmount === null) {
       throw new Error('Swap route is null');
@@ -45,13 +58,14 @@ class MangataExchangeNode extends ExchangeNode {
     const minAmountOutBN = res.bestAmount.mul(new BN(100 - MAX_SLIPPAGE)).div(BN_HUNDRED);
 
     console.log('Original amount', amount);
+    console.log('Amount without fee', amountWithoutFee.toString());
     console.log('Best amount', res.bestAmount.toString());
     console.log('Min Amount out', minAmountOutBN.toString());
 
     const args: MultiswapSellAsset = {
       account: injectorAddress,
       tokenIds: res.bestRoute.map((item) => item.id),
-      amount: new BN(amount),
+      amount: new BN(amountWithoutFee.toString()),
       minAmountOut: minAmountOutBN,
     };
     const tx = await mangata.submitableExtrinsic.multiswapSellAsset(args);

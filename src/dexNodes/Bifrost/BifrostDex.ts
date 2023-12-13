@@ -95,9 +95,15 @@ class BifrostExchangeNode extends ExchangeNode {
       throw new Error('Extrinsic is null');
     }
 
+    const amountOutBN = new BigNumber(trade.outputAmount.toFixed())
+      .shiftedBy(tokenTo.decimals)
+      .decimalPlaces(0);
+
+    console.log(amountOutBN.toString());
+
     return {
       tx: extrinsic[0],
-      amountOut: trade.outputAmount.toFixed(),
+      amountOut: amountOutBN.toString(),
     };
   }
 }

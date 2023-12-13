@@ -12,7 +12,7 @@ describe('BifrostDex', () => {
     const options: TSwapOptions = {
       currencyFrom: 'DOT',
       currencyTo: 'BNC',
-      amount: '1000000000000',
+      amount: '5000000000',
       slippagePct: '1',
       injectorAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
     };

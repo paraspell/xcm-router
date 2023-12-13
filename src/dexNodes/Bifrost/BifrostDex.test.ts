@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import BifrostExchangeNode from './BifrostDex';
 import { type TSwapOptions } from '../../types';
+import { createApiInstanceForNode } from '@paraspell/sdk';
+import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from '../..';
+import { calculateTransactionFee } from '../../utils';
 
 describe('BifrostDex', () => {
   // it('should calculate transaction fee correctly', async () => {});
@@ -8,14 +11,34 @@ describe('BifrostDex', () => {
   it('should build a transfer extrinsic without error', async () => {
     const options: TSwapOptions = {
       currencyFrom: 'DOT',
-      currencyTo: 'AUSD',
-      amount: '13492595211036653790',
+      currencyTo: 'BNC',
+      amount: '1000000000000',
       slippagePct: '1',
       injectorAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
     };
     const dex = new BifrostExchangeNode('BifrostPolkadot');
-    const api = await dex.createApiInstance();
-    const tx = await dex.swapCurrency(api, options);
+    const swapApi = await dex.createApiInstance();
+    const swapOptions = {
+      ...options,
+      destinationNode: 'Polkadot',
+      exchangeNode: 'BifrostPolkadot',
+      originNode: 'HydraDX',
+      address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+    } as any;
+    const originApi = await createApiInstanceForNode(swapOptions.originNode);
+    const toDestTx = buildFromExchangeExtrinsic(swapApi, swapOptions, options.amount);
+    const toExchangeTx = buildToExchangeExtrinsic(originApi, swapOptions);
+    const toDestTransactionFee = await calculateTransactionFee(toDestTx, options.injectorAddress);
+    const toExchangeTransactionFee = await calculateTransactionFee(
+      toExchangeTx,
+      options.injectorAddress,
+    );
+    const tx = await dex.swapCurrency(
+      swapApi,
+      options,
+      toDestTransactionFee,
+      toExchangeTransactionFee,
+    );
     expect(tx).toBeDefined();
   });
 });

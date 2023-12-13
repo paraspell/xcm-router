@@ -2,54 +2,81 @@ import ExchangeNode from '../DexNode';
 import { type TSwapResult, type TSwapOptions } from '../../types';
 import { type ApiPromise } from '@polkadot/api';
 import { getParaId } from '@paraspell/sdk';
-import { PairState, fetchPairs } from './utils';
-import { Amount, DOT, WNATIVE, getCurrencyCombinations } from '@crypto-dex-sdk/currency';
-import { Trade, type Pair } from '@crypto-dex-sdk/amm';
+import { getBestTrade, getFilteredPairs, getTokenMap } from './bifrostUtils';
+import { Amount, Token, getCurrencyCombinations, type TokenMap } from '@crypto-dex-sdk/currency';
 import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
 import { Percent } from '@crypto-dex-sdk/math';
+import BigNumber from 'bignumber.js';
+import { convertAmount } from './utils';
+import { FEE_BUFFER } from '../../consts/consts';
+
+const findToken = (tokenMap: TokenMap, symbol: string): Token | undefined => {
+  return Object.values(tokenMap).find((item) => item.wrapped.symbol === symbol)?.wrapped;
+};
 
 class BifrostExchangeNode extends ExchangeNode {
   async swapCurrency(
     api: ApiPromise,
     { currencyFrom, currencyTo, amount, injectorAddress, slippagePct }: TSwapOptions,
+    toDestTransactionFee: BigNumber,
+    toExchangeTransactionFee: BigNumber,
   ): Promise<TSwapResult> {
     console.log('Swapping currency on Bifrost');
 
     const chainId = getParaId(this.node);
 
-    console.log('chain id', chainId);
+    const tokenMap = getTokenMap(this.node, chainId);
 
-    const token0 = WNATIVE[chainId];
-    const token1 = DOT[chainId];
+    const tokenWrappedFrom = findToken(tokenMap, currencyFrom);
 
-    console.log(token0);
-    console.log(token1);
-
-    const currencyCombinations = getCurrencyCombinations(chainId, token0, token1);
-
-    // console.log('currency combinations', currencyCombinations);
-
-    const pairs = await fetchPairs(api, chainId, currencyCombinations);
-
-    // console.log('pairs', pairs);
-
-    const amountIn = Amount.fromRawAmount(token0, 1000000000000);
-
-    const filteredPairs = Object.values(
-      pairs.data
-        .filter((result): result is [PairState.EXISTS, Pair] =>
-          Boolean(result[0] === PairState.EXISTS && result[1]),
-        )
-        .map(([, pair]) => pair),
-    );
-
-    const trades = Trade.bestTradeExactIn(chainId, filteredPairs, [], amountIn, token1);
-
-    if (trades.length < 1) {
-      throw new Error('Trade not found');
+    if (tokenWrappedFrom === undefined) {
+      throw new Error('Currency from not found');
     }
 
-    const trade = trades[0];
+    const tokenWrappedTo = findToken(tokenMap, currencyTo);
+
+    if (tokenWrappedTo === undefined) {
+      throw new Error('Currency to not found');
+    }
+
+    const tokenFrom = new Token(tokenWrappedFrom.wrapped);
+    const tokenTo = new Token(tokenWrappedTo.wrapped);
+
+    const currencyCombinations = getCurrencyCombinations(chainId, tokenFrom, tokenTo);
+
+    const pairs = await getFilteredPairs(api, chainId, currencyCombinations);
+
+    const toDestFee = convertAmount(toDestTransactionFee, tokenFrom, chainId, pairs);
+
+    console.log('Original amount', amount);
+
+    const amountBN = new BigNumber(amount);
+
+    const amountWithoutFee = amountBN
+      .minus(toDestFee.multipliedBy(FEE_BUFFER))
+      .minus(toDestFee.multipliedBy(FEE_BUFFER))
+      .decimalPlaces(0);
+
+    console.log('Amount modified', amountWithoutFee.toString());
+
+    const amountIn = Amount.fromRawAmount(tokenFrom, amountWithoutFee.toString());
+
+    const tradeForSwapFee = getBestTrade(chainId, pairs, amountIn, tokenTo);
+
+    const swapFeePct = tradeForSwapFee.descriptions.reduce((sum, item) => sum + item.fee, 0);
+
+    const swapFeePctWithBuffer = swapFeePct * FEE_BUFFER;
+
+    const amountWithoutSwapFee = amountWithoutFee
+      .multipliedBy(1 - swapFeePctWithBuffer / 100)
+      .decimalPlaces(0);
+
+    console.log('feePct', swapFeePct);
+    console.log('amount without swap fee', amountWithoutSwapFee.toString());
+
+    const amountInFinal = Amount.fromRawAmount(tokenFrom, amountWithoutSwapFee.toString());
+
+    const trade = getBestTrade(chainId, pairs, amountInFinal, tokenTo);
 
     const allowedSlippage = new Percent(Number(slippagePct) * 100, 10_000);
 
@@ -68,11 +95,9 @@ class BifrostExchangeNode extends ExchangeNode {
       throw new Error('Extrinsic is null');
     }
 
-    console.log(trade);
-
     return {
       tx: extrinsic[0],
-      amountOut: '0',
+      amountOut: trade.outputAmount.toFixed(),
     };
   }
 }

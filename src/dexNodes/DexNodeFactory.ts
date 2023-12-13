@@ -1,5 +1,6 @@
 import { type TExchangeNode } from '../types';
 import AcalaExchangeNode from './Acala/AcalaDex';
+import BifrostExchangeNode from './Bifrost/BifrostDex';
 import type ExchangeNode from './DexNode';
 import HydraDxExchangeNode from './HydraDx/HydraDxDex';
 import InterlayExchangeNode from './Interlay/InterlayDex';
@@ -14,8 +15,8 @@ const map: Record<TExchangeNode, ExchangeNode> = {
   MangataDex: new MangataExchangeNode(),
   InterlayDex: new InterlayExchangeNode('Interlay'),
   KintsugiDex: new InterlayExchangeNode('Kintsugi'),
-  // BifrostPolkadotDex: new BifrostExchangeNode('BifrostPolkadot'),
-  // BifrostKusamaDex: new BifrostExchangeNode('BifrostKusama'),
+  BifrostPolkadotDex: new BifrostExchangeNode('BifrostPolkadot'),
+  BifrostKusamaDex: new BifrostExchangeNode('BifrostKusama'),
 };
 
 const createDexNodeInstance = (node: TExchangeNode): ExchangeNode => {

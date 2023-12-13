@@ -1,85 +1,79 @@
 import ExchangeNode from '../DexNode';
 import { type TSwapResult, type TSwapOptions } from '../../types';
 import { type ApiPromise } from '@polkadot/api';
+import { getParaId } from '@paraspell/sdk';
+import { PairState, fetchPairs } from './utils';
+import { Amount, DOT, WNATIVE, getCurrencyCombinations } from '@crypto-dex-sdk/currency';
+import { Trade, type Pair } from '@crypto-dex-sdk/amm';
+import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
+import { Percent } from '@crypto-dex-sdk/math';
 
 class BifrostExchangeNode extends ExchangeNode {
   async swapCurrency(
     api: ApiPromise,
-    { currencyFrom, currencyTo, amount, injectorAddress }: TSwapOptions,
+    { currencyFrom, currencyTo, amount, injectorAddress, slippagePct }: TSwapOptions,
   ): Promise<TSwapResult> {
     console.log('Swapping currency on Bifrost');
 
-    // const provider = new WsProvider(getNodeProvider('BifrostPolkadot'));
-    // await provider.isReady;
+    const chainId = getParaId(this.node);
 
-    // const dexApi = new ModuleBApi(provider, BifrostConfig);
-    // await dexApi.initApi();
+    console.log('chain id', chainId);
 
-    // const response = await axios.get(
-    //   'https://raw.githubusercontent.com/zenlinkpro/token-list/main/tokens/bifrost-polkadot.json',
-    // );
-    // const tokensMeta = response.data.tokens;
+    const token0 = WNATIVE[chainId];
+    const token1 = DOT[chainId];
 
-    // const tokens: Token[] = tokensMeta.map((item: any) => {
-    //   return new Token(item);
-    // });
+    console.log(token0);
+    console.log(token1);
 
-    // const standardPairs = await firstValueFrom(dexApi.standardPairOfTokens(tokens));
-    // const standardPools = await firstValueFrom(dexApi.standardPoolOfPairs(standardPairs));
-    // console.log('standardPools', standardPools);
-    // console.log('standardPairs', standardPairs);
+    const currencyCombinations = getCurrencyCombinations(chainId, token0, token1);
 
-    // const stablePairs: StablePair[] = await firstValueFrom(dexApi.stablePairOf());
-    // console.log('stablePairs', stablePairs);
+    // console.log('currency combinations', currencyCombinations);
 
-    // const stablePools: StableSwap[] = await firstValueFrom(dexApi.stablePoolOfPairs());
+    const pairs = await fetchPairs(api, chainId, currencyCombinations);
 
-    // const tokensMap: Record<string, Token> = {};
-    // tokens.reduce((total: Record<string, Token>, cur: Token) => {
-    //   total[cur.assetId] = cur;
-    //   return total;
-    // }, tokensMap);
+    // console.log('pairs', pairs);
 
-    // const bncToken = tokensMap['200-2001-0-0'];
-    // const vsKSMToken = tokensMap['200-2001-2-1028'];
-    // const bncAmount = new TokenAmount(bncToken, (10_000_000_000_000).toString());
+    const amountIn = Amount.fromRawAmount(token0, 1000000000000);
 
-    // const fromToken = bncAmount;
-    // const fromTokenAmount = new TokenAmount(fromToken as any, (1_000_000_000_000_000).toString());
-    // const toToken = vsKSMToken;
+    const filteredPairs = Object.values(
+      pairs.data
+        .filter((result): result is [PairState.EXISTS, Pair] =>
+          Boolean(result[0] === PairState.EXISTS && result[1]),
+        )
+        .map(([, pair]) => pair),
+    );
 
-    // const result = SmartRouterV2.swapExactTokensForTokens(
-    //   fromTokenAmount,
-    //   toToken,
-    //   standardPools,
-    //   stablePools,
-    // );
+    const trades = Trade.bestTradeExactIn(chainId, filteredPairs, [], amountIn, token1);
 
-    // const trade = result.trade;
+    if (trades.length < 1) {
+      throw new Error('Trade not found');
+    }
 
-    // if (dexApi.api === undefined) {
-    //   throw new Error('api not initialized');
-    // }
+    const trade = trades[0];
 
-    // const blockNumber = await dexApi.api.query.system.number();
-    // const deadline = Number(blockNumber.toString()) + 20; // deadline is block height
+    const allowedSlippage = new Percent(Number(slippagePct) * 100, 10_000);
 
-    // // set slippage of 5%
-    // const slippageTolerance = new Percent(5, 100);
+    const blockNumber = await api.derive.chain.bestNumber();
 
-    // if (trade === undefined) {
-    //   throw new Error('trade is undefined');
-    // }
+    const deadline = blockNumber.toNumber() + 20;
 
-    // const extrinsics = dexApi.swapExactTokensForTokens(
-    //   trade.route.routePath,
-    //   trade.inputAmount,
-    //   trade.minimumAmountOut(slippageTolerance),
-    //   injectorAddress,
-    //   deadline,
-    // );
+    const { extrinsic } = SwapRouter.swapCallParameters(trade, {
+      api,
+      allowedSlippage,
+      recipient: injectorAddress,
+      deadline,
+    });
 
-    return null as any;
+    if (extrinsic === null) {
+      throw new Error('Extrinsic is null');
+    }
+
+    console.log(trade);
+
+    return {
+      tx: extrinsic[0],
+      amountOut: '0',
+    };
   }
 }
 

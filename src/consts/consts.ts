@@ -6,8 +6,8 @@ export const EXCHANGE_NODES = [
   'MangataDex',
   'KintsugiDex',
   'InterlayDex',
-  // 'BifrostKusamaDex',
-  // 'BifrostPolkadotDex',
+  'BifrostKusamaDex',
+  'BifrostPolkadotDex',
 ] as const;
 
 export const FEE_BUFFER = 1.5;

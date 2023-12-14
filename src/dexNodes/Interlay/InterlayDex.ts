@@ -10,7 +10,7 @@ import {
 import { type ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 import BigNumber from 'bignumber.js';
-import { FEE_BUFFER } from '../../consts/consts';
+import { FEE_BUFFER } from '../../consts';
 
 const getCurrency = async (
   symbol: string,
@@ -39,7 +39,7 @@ class InterlayExchangeNode extends ExchangeNode {
   ): Promise<TSwapResult> {
     console.log('Swapping currency on Interlay');
 
-    const interBTC = await createInterBtcApi(getNodeProvider(this.node) as string, 'mainnet');
+    const interBTC = await createInterBtcApi(getNodeProvider(this.node), 'mainnet');
 
     const assetFrom = await getCurrency(currencyFrom, interBTC, this.node);
 
@@ -76,10 +76,10 @@ class InterlayExchangeNode extends ExchangeNode {
 
     const currentBlock = await api.query.system.number();
     const deadline = currentBlock.add(new BN(150));
-    
+
     const trade1 = interBTC.amm.swap(trade, outputAmount, injectorAddress, deadline.toString());
     const extrinsic: any = trade1.extrinsic;
-  
+
     return {
       tx: extrinsic,
       amountOut: trade.outputAmount.toString(true),

@@ -8,7 +8,7 @@ import { firstValueFrom } from 'rxjs';
 import { type ApiPromise } from '@polkadot/api';
 import { calculateAcalaTransactionFee, createAcalaApiInstance } from './utils';
 import BigNumber from 'bignumber.js';
-import { FEE_BUFFER } from '../../consts/consts';
+import { FEE_BUFFER } from '../../consts';
 
 class AcalaExchangeNode extends ExchangeNode {
   async swapCurrency(

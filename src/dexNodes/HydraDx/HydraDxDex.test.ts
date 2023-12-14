@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { type TSwapOptions } from '../../types';
 import HydraDxExchangeNode from './HydraDxDex';
 import { calculateTransactionFee } from '../../utils';
-import { buildFromExchangeExtrinsic } from '../..';
+import { buildFromExchangeExtrinsic } from '../../transfer/utils';
 
 describe.skip('HydraDx utils', () => {
   // it('should calculate transaction fee correctly', async () => {});

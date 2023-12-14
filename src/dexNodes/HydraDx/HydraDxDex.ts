@@ -4,7 +4,7 @@ import { PoolService, TradeRouter, BigNumber, PoolType } from '@galacticcouncil/
 import { calculateFee, getAssetInfo, getMinAmountOut } from './utils';
 import { type TSwapResult, type TSwapOptions } from '../../types';
 import { type ApiPromise } from '@polkadot/api';
-import { FEE_BUFFER } from '../../consts/consts';
+import { FEE_BUFFER } from '../../consts';
 
 class HydraDxExchangeNode extends ExchangeNode {
   async swapCurrency(

@@ -1,7 +1,7 @@
 import { BigNumber, type TradeRouter, bnum, type PoolAsset } from '@galacticcouncil/sdk';
 import { type TSwapOptions } from '../../types';
 import { type TNode, type Extrinsic, getAssetDecimals } from '@paraspell/sdk';
-import { FEE_BUFFER } from '../../consts/consts';
+import { FEE_BUFFER } from '../../consts';
 import { calculateTransactionFee } from '../../utils';
 
 export const calculateFee = async (

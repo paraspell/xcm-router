@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { type TSwapOptions } from '../../types';
 import InterlayExchangeNode from './InterlayDex';
 import { calculateTransactionFee } from '../../utils';
-import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from '../..';
 import { createApiInstanceForNode } from '@paraspell/sdk';
+import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from '../../transfer/utils';
 
 describe.skip('InterlayDex', () => {
   // it('should calculate transaction fee correctly', async () => {});

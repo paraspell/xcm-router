@@ -11,7 +11,7 @@ import {
   type MultiswapSellAsset,
 } from '@mangata-finance/sdk';
 import { getAllPools, routeExactIn } from './routingUtils';
-import { FEE_BUFFER } from '../../consts/consts';
+import { FEE_BUFFER } from '../../consts';
 import BigNumber from 'bignumber.js';
 
 class MangataExchangeNode extends ExchangeNode {

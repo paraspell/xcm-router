@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import AcalaExchangeNode from './AcalaDex';
 import { type TSwapOptions } from '../../types';
 import { calculateTransactionFee } from '../../utils';
-import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from '../..';
 import { createApiInstanceForNode } from '@paraspell/sdk';
+import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from '../../transfer/utils';
 // import BigNumber from 'bignumber.js';
 
 describe.skip('Acala utils', () => {

@@ -1,6 +1,6 @@
 import { type TNodeWithRelayChains, type Extrinsic, type TNode } from '@paraspell/sdk';
 import { type Signer } from '@polkadot/types/types';
-import { type EXCHANGE_NODES } from './consts/consts';
+import { type EXCHANGE_NODES } from './consts';
 
 export type TBigNumber = string | number | bigint;
 

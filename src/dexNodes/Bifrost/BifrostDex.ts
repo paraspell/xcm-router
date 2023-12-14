@@ -8,7 +8,7 @@ import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
 import { Percent } from '@crypto-dex-sdk/math';
 import BigNumber from 'bignumber.js';
 import { convertAmount } from './utils';
-import { FEE_BUFFER } from '../../consts/consts';
+import { FEE_BUFFER } from '../../consts';
 
 const findToken = (tokenMap: TokenMap, symbol: string): Token | undefined => {
   return Object.values(tokenMap).find((item) => item.wrapped.symbol === symbol)?.wrapped;
@@ -52,10 +52,7 @@ class BifrostExchangeNode extends ExchangeNode {
 
     const amountBN = new BigNumber(amount);
 
-    const amountWithoutFee = amountBN
-      .minus(toDestFee.multipliedBy(FEE_BUFFER))
-      .minus(toDestFee.multipliedBy(FEE_BUFFER))
-      .decimalPlaces(0);
+    const amountWithoutFee = amountBN.minus(toDestFee.multipliedBy(FEE_BUFFER)).decimalPlaces(0);
 
     console.log('Amount modified', amountWithoutFee.toString());
 
@@ -99,11 +96,21 @@ class BifrostExchangeNode extends ExchangeNode {
       .shiftedBy(tokenTo.decimals)
       .decimalPlaces(0);
 
+    const toDestFeeOut = convertAmount(toDestTransactionFee, tokenTo, chainId, pairs);
+
+    console.log('out fee in bnc', toDestFeeOut.toString());
+
+    const amountOutFinalBN = amountOutBN
+      .minus(toDestFeeOut.multipliedBy(FEE_BUFFER))
+      .decimalPlaces(0);
+
+    console.log(trade.outputAmount.toFixed().toString());
     console.log(amountOutBN.toString());
+    console.log(amountOutFinalBN.toString());
 
     return {
       tx: extrinsic[0],
-      amountOut: amountOutBN.toString(),
+      amountOut: amountOutFinalBN.toString(),
     };
   }
 }

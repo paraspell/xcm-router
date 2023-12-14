@@ -11,6 +11,8 @@ export const convertAmount = (
 ): BigNumber => {
   const native = Native.onChain(chainId);
   if (token.symbol === native.symbol) {
+    console.log('returning');
+
     return feeAmount;
   }
 

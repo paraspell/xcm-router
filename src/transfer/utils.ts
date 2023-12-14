@@ -3,7 +3,8 @@ import { type ApiPromise } from '@polkadot/api';
 import type BigNumber from 'bignumber.js';
 import type ExchangeNode from '../dexNodes/DexNode';
 import { type TTransferOptionsModified } from '../types';
-import { submitTransaction, validateRelayChainCurrency } from '../utils';
+import { validateRelayChainCurrency } from '../utils/utils';
+import { submitTransaction } from '../utils/submitTransaction';
 
 export const buildToExchangeExtrinsic = (
   api: ApiPromise,

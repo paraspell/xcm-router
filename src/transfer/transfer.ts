@@ -6,7 +6,7 @@ import {
   TransactionType,
   TransactionStatus,
 } from '../types';
-import { calculateTransactionFee, delay, maybeUpdateTransferStatus } from '../utils';
+import { calculateTransactionFee, delay, maybeUpdateTransferStatus } from '../utils/utils';
 import {
   buildFromExchangeExtrinsic,
   buildToExchangeExtrinsic,

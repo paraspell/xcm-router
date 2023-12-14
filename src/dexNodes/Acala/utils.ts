@@ -8,7 +8,7 @@ import { type AggregateDex } from '@acala-network/sdk-swap';
 import { FixedPointNumber, type Token } from '@acala-network/sdk-core';
 import { firstValueFrom } from 'rxjs';
 import { FEE_BUFFER } from '../../consts';
-import { calculateTransactionFee } from '../../utils';
+import { calculateTransactionFee } from '../../utils/utils';
 
 export const createAcalaApiInstance = async (node: TNode): Promise<ApiPromise> => {
   const provider = new WsProvider(getNodeProvider(node) as any, 100);

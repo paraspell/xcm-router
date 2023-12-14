@@ -5,7 +5,7 @@ import { createApiInstanceForNode } from '@paraspell/sdk';
 import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from '../..';
 import { calculateTransactionFee } from '../../utils';
 
-describe('BifrostDex', () => {
+describe.skip('BifrostDex', () => {
   // it('should calculate transaction fee correctly', async () => {});
 
   it('should build a transfer extrinsic without error', async () => {

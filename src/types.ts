@@ -49,7 +49,7 @@ export interface TTransferOptions {
   currencyTo: string;
   amount: string;
   injectorAddress: string;
-  address: string;
+  recipientAddress: string;
   slippagePct: string;
   signer: Signer;
   type: TransactionType;

@@ -169,7 +169,12 @@ export const buildToExchangeExtrinsic = (
 
 export const buildFromExchangeExtrinsic = (
   api: ApiPromise,
-  { destinationNode, exchangeNode, currencyTo, address }: TTransferOptionsModified,
+  {
+    destinationNode,
+    exchangeNode,
+    currencyTo,
+    recipientAddress: address,
+  }: TTransferOptionsModified,
   amountOut: string,
 ): Extrinsic => {
   const builder = Builder(api);

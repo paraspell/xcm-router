@@ -2625,9 +2625,10 @@
     "@mangata-finance/sdk" "^2.1.1"
     ethers "^5.7.1"
 
-"@paraspell/xcm-router@file:./paraspell-xcm-router-v0.0.73.tgz":
+"@paraspell/xcm-router@^0.0.1":
   version "0.0.1"
-  resolved "file:./paraspell-xcm-router-v0.0.73.tgz#d02a5b3bbf56739e7c2dee94756360e720007151"
+  resolved "https://registry.yarnpkg.com/@paraspell/xcm-router/-/xcm-router-0.0.1.tgz#36a6da6ced5bfb625191f069ac244725961f0b9a"
+  integrity sha512-ZiHoZD8ls0ueULS1GnGr8GvhMKQFLNheh0Vwxyp9TWHyo88ozgVJeGLDXtIhvysbaqa4jqq6nq8Wuo4ajyjvnA==
   dependencies:
     "@acala-network/api" "^6.0.4"
     "@acala-network/app-util" "^4.1.5"

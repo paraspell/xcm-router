@@ -14,7 +14,7 @@ npm install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-conf
 ```
 ```sh
 # yarn
-yarn install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config @polkadot/util
+yarn add @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config @polkadot/util
 ```
 ```sh
 # pnpm currently unsupported (Support will be added soon (pnpm has build bug that their team needs to resolve))
@@ -28,7 +28,7 @@ npm install @paraspell/xcm-router
 ```
 ```sh
 # yarn
-yarn install @paraspell/xcm-router
+yarn add @paraspell/xcm-router
 ```
 ```sh
 # pnpm currently unsupported (Support will be added soon (pnpm has build bug that their team needs to resolve))

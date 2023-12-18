@@ -1,4 +1,4 @@
-import { BigNumber, type TradeRouter, bnum, type PoolAsset } from '@galacticcouncil/sdk';
+import { BigNumber, type TradeRouter, bnum, type Asset } from '@galacticcouncil/sdk';
 import { type TSwapOptions } from '../../types';
 import { type TNode, type Extrinsic, getAssetDecimals } from '@paraspell/sdk';
 import { FEE_BUFFER } from '../../consts';
@@ -8,8 +8,8 @@ import Logger from '../../Logger/Logger';
 export const calculateFee = async (
   { amount, slippagePct, injectorAddress }: TSwapOptions,
   tradeRouter: TradeRouter,
-  currencyFromInfo: PoolAsset,
-  currencyToInfo: PoolAsset,
+  currencyFromInfo: Asset,
+  currencyToInfo: Asset,
   currencyFromDecimals: number,
   currencyToDecimals: number,
   node: TNode,
@@ -111,7 +111,7 @@ export const getMinAmountOut = (
 export const getAssetInfo = async (
   tradeRouter: TradeRouter,
   currencySymbol: string,
-): Promise<PoolAsset | undefined> => {
+): Promise<Asset | undefined> => {
   const assets = await tradeRouter.getAllAssets();
-  return assets.find((asset: any) => asset.symbol === currencySymbol);
+  return assets.find((asset) => asset.symbol === currencySymbol);
 };

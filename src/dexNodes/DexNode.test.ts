@@ -1,3 +1,5 @@
+// Unit tests for DexNode class
+
 import { describe, it, expect, vi } from 'vitest';
 import { type TNode, createApiInstanceForNode } from '@paraspell/sdk';
 import BifrostExchangeNode from './Bifrost/BifrostDex';

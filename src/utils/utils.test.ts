@@ -1,3 +1,5 @@
+// Unit tests for general utils
+
 import { type Extrinsic, InvalidCurrencyError, createApiInstanceForNode } from '@paraspell/sdk';
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import {
@@ -124,9 +126,9 @@ export const MOCK_ADDRESS = '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96';
 export const MOCK_SLIIPPAGE = '1';
 
 export const MOCK_TRANSFER_OPTIONS: TTransferOptionsModified = {
-  originNode: 'Astar',
-  exchangeNode: 'HydraDX',
-  destinationNode: 'Moonbeam',
+  from: 'Astar',
+  exchange: 'HydraDX',
+  to: 'Moonbeam',
   currencyFrom: 'ASTR',
   currencyTo: 'GLMR',
   amount: '10000000000000000000',
@@ -141,7 +143,7 @@ export const performSwap = async (
   options: TTransferOptionsModified,
   dex: ExchangeNode,
 ): Promise<TSwapResult> => {
-  const originApi = await createApiInstanceForNode(options.originNode);
+  const originApi = await createApiInstanceForNode(options.from);
   const swapApi = await dex.createApiInstance();
   const toDestTx = buildFromExchangeExtrinsic(swapApi, options, options.amount);
   const toExchangeTx = buildToExchangeExtrinsic(originApi, options);

@@ -6,7 +6,7 @@ import HydraDxExchangeNode from './HydraDx/HydraDxDex';
 import InterlayExchangeNode from './Interlay/InterlayDex';
 import MangataExchangeNode from './Mangata/MangataDex';
 
-const map: Record<TExchangeNode, ExchangeNode> = {
+export const record: Record<TExchangeNode, ExchangeNode> = {
   // Reuse classes for Kusama equivalents
   HydraDxDex: new HydraDxExchangeNode('HydraDX'),
   BasiliskDex: new HydraDxExchangeNode('Basilisk'),
@@ -20,7 +20,7 @@ const map: Record<TExchangeNode, ExchangeNode> = {
 };
 
 const createDexNodeInstance = (node: TExchangeNode): ExchangeNode => {
-  return map[node];
+  return record[node];
 };
 
 export default createDexNodeInstance;

@@ -1,35 +1,13 @@
-import { getAssetId, getNodeProvider, type TNode } from '@paraspell/sdk';
+import { getAllAssetsSymbols, getNodeProvider } from '@paraspell/sdk';
 import ExchangeNode from '../DexNode';
-import { type TSwapResult, type TSwapOptions } from '../../types';
-import {
-  createInterBtcApi,
-  newMonetaryAmount,
-  type CurrencyExt,
-  type InterBtcApi,
-} from '@interlay/interbtc-api';
+import { type TSwapResult, type TSwapOptions, type TAssetSymbols } from '../../types';
+import { createInterBtcApi, newMonetaryAmount } from '@interlay/interbtc-api';
 import { type ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 import BigNumber from 'bignumber.js';
-import { FEE_BUFFER } from '../../consts';
+import { FEE_BUFFER } from '../../consts/consts';
 import Logger from '../../Logger/Logger';
-
-const getCurrency = async (
-  symbol: string,
-  interBTC: InterBtcApi,
-  node: TNode,
-): Promise<CurrencyExt | null> => {
-  if (symbol === 'DOT' || symbol === 'KSM') {
-    return interBTC.getRelayChainCurrency();
-  } else if (symbol === 'INTR' || symbol === 'KINT') {
-    return interBTC.getGovernanceCurrency();
-  } else if (symbol === 'IBTC' || symbol === 'KBTC') {
-    return interBTC.getWrappedCurrency();
-  } else {
-    const id = getAssetId(node, symbol);
-    if (id === null) return null;
-    return await interBTC.assetRegistry.getForeignAsset(Number(id));
-  }
-};
+import { getCurrency } from './utils';
 
 class InterlayExchangeNode extends ExchangeNode {
   async swapCurrency(
@@ -83,6 +61,10 @@ class InterlayExchangeNode extends ExchangeNode {
       tx: extrinsic,
       amountOut: trade.outputAmount.toString(true),
     };
+  }
+
+  async getAssetSymbols(api: ApiPromise): Promise<TAssetSymbols> {
+    return getAllAssetsSymbols(this.node);
   }
 }
 

@@ -1,9 +1,11 @@
+// Integration tests for BifrostDex
+
 import { describe, expect, it } from 'vitest';
 import BifrostExchangeNode from './BifrostDex';
 import { type TTransferOptionsModified } from '../../types';
 import { MOCK_TRANSFER_OPTIONS, performSwap } from '../../utils/utils.test';
 
-describe('BifrostDex', () => {
+describe('BifrostDex - integration', () => {
   it('should build a transfer extrinsic without error on Bifrost Polkadot', async () => {
     const dex = new BifrostExchangeNode('BifrostPolkadot');
     const options: TTransferOptionsModified = {
@@ -11,9 +13,9 @@ describe('BifrostDex', () => {
       currencyFrom: 'DOT',
       currencyTo: 'BNC',
       amount: '5000000000',
-      destinationNode: 'Polkadot',
-      exchangeNode: 'BifrostPolkadot',
-      originNode: 'HydraDX',
+      to: 'Polkadot',
+      exchange: 'BifrostPolkadot',
+      from: 'HydraDX',
     };
     const tx = await performSwap(options, dex);
     expect(tx).toBeDefined();
@@ -26,11 +28,18 @@ describe('BifrostDex', () => {
       currencyFrom: 'KAR',
       currencyTo: 'KSM',
       amount: '1000000000000',
-      destinationNode: 'Karura',
-      exchangeNode: 'BifrostKusama',
-      originNode: 'Kusama',
+      to: 'Karura',
+      exchange: 'BifrostKusama',
+      from: 'Kusama',
     };
     const tx = await performSwap(options, dex);
     expect(tx).toBeDefined();
+  });
+
+  it('should return asset symbols', async () => {
+    const dex = new BifrostExchangeNode('BifrostPolkadot');
+    const api = await dex.createApiInstance();
+    const symbols = await dex.getAssetSymbols(api);
+    expect(symbols.length).toBeGreaterThan(0);
   });
 });

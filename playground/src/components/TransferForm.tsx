@@ -2,19 +2,22 @@ import { useForm } from '@mantine/form';
 import { EXCHANGE_NODES, TExchangeNode, TransactionType } from '@paraspell/xcm-router';
 import { isValidWalletAddress } from '../utils';
 import { FC } from 'react';
-import { Button, Select, Stack, TextInput } from '@mantine/core';
+import { Button, Checkbox, Select, Stack, TextInput } from '@mantine/core';
 import { NODES_WITH_RELAY_CHAINS, TNodeWithRelayChains } from '@paraspell/sdk';
 
+export type TAutoSelect = 'Auto select';
+
 export type FormValues = {
-  originNode: TNodeWithRelayChains;
-  exchangeNode: TExchangeNode;
-  destinationNode: TNodeWithRelayChains;
+  from: TNodeWithRelayChains;
+  exchange: TExchangeNode | TAutoSelect;
+  to: TNodeWithRelayChains;
   currencyFrom: string;
   currencyTo: string;
   recipientAddress: string;
   amount: string;
   slippagePct: string;
   transactionType: keyof typeof TransactionType;
+  useApi: boolean;
 };
 
 type Props = {
@@ -25,15 +28,16 @@ type Props = {
 const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
   const form = useForm<FormValues>({
     initialValues: {
-      originNode: 'Astar',
-      exchangeNode: 'HydraDxDex',
-      destinationNode: 'Moonbeam',
+      from: 'Astar',
+      to: 'Moonbeam',
+      exchange: 'Auto select',
       currencyFrom: 'ASTR',
       currencyTo: 'GLMR',
       amount: '10000000000000000000',
       recipientAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
       slippagePct: '1',
       transactionType: 'FULL_TRANSFER',
+      useApi: false,
     },
 
     validate: {
@@ -50,16 +54,16 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
           data={[...NODES_WITH_RELAY_CHAINS]}
           searchable
           required
-          {...form.getInputProps('originNode')}
+          {...form.getInputProps('from')}
         />
 
         <Select
           label="Exchange node"
           placeholder="Pick value"
-          data={[...EXCHANGE_NODES]}
+          data={['Auto select', ...EXCHANGE_NODES]}
           searchable
           required
-          {...form.getInputProps('exchangeNode')}
+          {...form.getInputProps('exchange')}
         />
 
         <Select
@@ -68,7 +72,7 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
           data={[...NODES_WITH_RELAY_CHAINS]}
           searchable
           required
-          {...form.getInputProps('destinationNode')}
+          {...form.getInputProps('to')}
         />
 
         <TextInput
@@ -94,19 +98,21 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
 
         <TextInput label="Amount" placeholder="0" required {...form.getInputProps('amount')} />
 
-        <Select
-          label="Transaction type"
-          placeholder="Pick value"
-          data={[
-            TransactionType.TO_EXCHANGE.toString(),
-            TransactionType.TO_DESTINATION.toString(),
-            TransactionType.SWAP.toString(),
-            TransactionType.FULL_TRANSFER.toString(),
-          ]}
-          searchable
-          required
-          {...form.getInputProps('transactionType')}
-        />
+        {!form.values.useApi && (
+          <Select
+            label="Transaction type"
+            placeholder="Pick value"
+            data={[
+              TransactionType.TO_EXCHANGE.toString(),
+              TransactionType.TO_DESTINATION.toString(),
+              TransactionType.SWAP.toString(),
+              TransactionType.FULL_TRANSFER.toString(),
+            ]}
+            searchable
+            required
+            {...form.getInputProps('transactionType')}
+          />
+        )}
 
         <TextInput
           label="Slippage percentage (%)"
@@ -114,6 +120,8 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
           required
           {...form.getInputProps('slippagePct')}
         />
+
+        <Checkbox label="Use XCM API" {...form.getInputProps('useApi')} />
 
         <Button type="submit" loading={loading}>
           Submit transaction

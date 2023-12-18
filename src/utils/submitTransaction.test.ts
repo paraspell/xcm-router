@@ -1,3 +1,5 @@
+// Unit tests for submitTransaction function
+
 /* eslint-disable n/no-callback-literal */
 import { type Extrinsic } from '@paraspell/sdk';
 import { type ApiPromise } from '@polkadot/api';

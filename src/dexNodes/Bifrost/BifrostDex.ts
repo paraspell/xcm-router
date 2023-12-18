@@ -1,5 +1,5 @@
 import ExchangeNode from '../DexNode';
-import { type TSwapResult, type TSwapOptions } from '../../types';
+import { type TSwapResult, type TSwapOptions, type TAssetSymbols } from '../../types';
 import { type ApiPromise } from '@polkadot/api';
 import { getParaId } from '@paraspell/sdk';
 import { getBestTrade, getFilteredPairs, getTokenMap } from './bifrostUtils';
@@ -8,7 +8,7 @@ import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
 import { Percent } from '@crypto-dex-sdk/math';
 import BigNumber from 'bignumber.js';
 import { convertAmount } from './utils';
-import { FEE_BUFFER } from '../../consts';
+import { FEE_BUFFER } from '../../consts/consts';
 import Logger from '../../Logger/Logger';
 
 const findToken = (tokenMap: TokenMap, symbol: string): Token | undefined => {
@@ -113,6 +113,13 @@ class BifrostExchangeNode extends ExchangeNode {
       tx: extrinsic[0],
       amountOut: amountOutFinalBN.toString(),
     };
+  }
+
+  async getAssetSymbols(api: ApiPromise): Promise<TAssetSymbols> {
+    const chainId = getParaId(this.node);
+    const tokenMap = getTokenMap(this.node, chainId);
+    const symbols = Object.values(tokenMap).map((item) => item.wrapped.symbol);
+    return symbols as string[];
   }
 }
 

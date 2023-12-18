@@ -10,7 +10,7 @@ import {
   PAIR_ADDRESSES,
   addressToNodeCurrency,
   isNativeCurrency,
-} from '@crypto-dex-sdk/parachains-bifrost/libs';
+} from '@crypto-dex-sdk/parachains-bifrost';
 import { type ApiPromise } from '@polkadot/api';
 import { type QueryableStorageEntry } from '@polkadot/api/types';
 import { type OrmlTokensAccountData } from '@zenlink-types/bifrost/interfaces';

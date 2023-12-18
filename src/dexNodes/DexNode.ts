@@ -1,5 +1,5 @@
 import { createApiInstanceForNode, type TNode } from '@paraspell/sdk';
-import { type TSwapResult, type TSwapOptions } from '../types';
+import { type TSwapResult, type TSwapOptions, type TAssetSymbols } from '../types';
 import { type ApiPromise } from '@polkadot/api';
 import type BigNumber from 'bignumber.js';
 
@@ -20,6 +20,8 @@ abstract class ExchangeNode {
     toDestTransactionFee: BigNumber,
     toExchangeTransactionFee: BigNumber,
   ): Promise<TSwapResult>;
+
+  abstract getAssetSymbols(api: ApiPromise): Promise<TAssetSymbols>;
 
   async createApiInstance(): Promise<ApiPromise> {
     return await createApiInstanceForNode(this.node);

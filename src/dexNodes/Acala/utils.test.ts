@@ -1,3 +1,5 @@
+// Unit tests for Acala utils
+
 import { describe, it, expect, vi } from 'vitest';
 import { convertCurrency } from './utils';
 import { type Wallet } from '@acala-network/sdk';

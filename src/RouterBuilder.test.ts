@@ -1,27 +1,26 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { describe, expect, it, vi, beforeEach, type MockInstance } from 'vitest';
 import * as index from './index';
 import RouterBuilder from './RouterBuilder';
 import { type Signer } from '@polkadot/api/types';
 
 export const transferParams: index.TTransferOptions = {
-  originNode: 'Polkadot',
-  exchangeNode: 'HydraDxDex',
-  destinationNode: 'Astar',
-  currencyFrom: 'DOT',
-  currencyTo: 'ASTR',
+  from: 'Astar',
+  exchange: 'HydraDxDex',
+  to: 'Moonbeam',
+  currencyFrom: 'ASTR',
+  currencyTo: 'GLMR',
   amount: '1000000000',
   injectorAddress: '',
   recipientAddress: 'YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg',
-  signer: {} as Signer,
+  signer: {} as unknown as Signer,
   slippagePct: '1',
   type: index.TransactionType.FULL_TRANSFER,
 };
 
 const {
-  originNode,
-  exchangeNode,
-  destinationNode,
+  from,
+  exchange = 'AcalaDex',
+  to,
   currencyFrom,
   currencyTo,
   amount,
@@ -31,6 +30,7 @@ const {
   slippagePct,
 } = transferParams;
 
+// Unit tests for RouterBuilder
 describe('Builder', () => {
   let spy: MockInstance;
 
@@ -40,9 +40,9 @@ describe('Builder', () => {
 
   it('should construct a transfer using RouterBuilder', async () => {
     await RouterBuilder()
-      .from(originNode)
-      .exchange(exchangeNode)
-      .to(destinationNode)
+      .from(from)
+      .exchange(exchange)
+      .to(to)
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
@@ -59,9 +59,9 @@ describe('Builder', () => {
     const onStatusChange = vi.fn();
 
     await RouterBuilder()
-      .from(originNode)
-      .exchange(exchangeNode)
-      .to(destinationNode)
+      .from(from)
+      .exchange(exchange)
+      .to(to)
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
@@ -78,9 +78,9 @@ describe('Builder', () => {
   it('should fail to construct a transfer using RouterBuilder when missing some params', async () => {
     await expect(async () => {
       await RouterBuilder()
-        .from(originNode)
-        .exchange(exchangeNode)
-        .to(destinationNode)
+        .from(from)
+        .exchange(exchange)
+        .to(to)
         .currencyFrom(currencyFrom)
         .currencyTo(currencyTo)
         .amount(amount)

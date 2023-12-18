@@ -9,9 +9,9 @@ import {
 import { type TNodeWithRelayChains } from '@paraspell/sdk';
 
 export interface TRouterBuilderOptions {
-  originNode?: TNodeWithRelayChains;
-  exchangeNode?: TExchangeNode;
-  destinationNode?: TNodeWithRelayChains;
+  from?: TNodeWithRelayChains;
+  exchange?: TExchangeNode;
+  to?: TNodeWithRelayChains;
   currencyFrom?: string;
   currencyTo?: string;
   amount?: string;
@@ -30,17 +30,17 @@ export class RouterBuilderObject {
   }
 
   from(node: TNodeWithRelayChains): this {
-    this._routerBuilderOptions.originNode = node;
+    this._routerBuilderOptions.from = node;
     return this;
   }
 
   exchange(node: TExchangeNode): this {
-    this._routerBuilderOptions.exchangeNode = node;
+    this._routerBuilderOptions.exchange = node;
     return this;
   }
 
   to(node: TNodeWithRelayChains): this {
-    this._routerBuilderOptions.destinationNode = node;
+    this._routerBuilderOptions.to = node;
     return this;
   }
 
@@ -86,9 +86,9 @@ export class RouterBuilderObject {
 
   async build(): Promise<void> {
     const requiredParams: Array<keyof TRouterBuilderOptions> = [
-      'originNode',
-      'exchangeNode',
-      'destinationNode',
+      'from',
+      'exchange',
+      'to',
       'currencyFrom',
       'currencyTo',
       'amount',

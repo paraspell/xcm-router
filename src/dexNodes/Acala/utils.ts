@@ -7,7 +7,7 @@ import { type TSwapOptions } from '../../types';
 import { type AggregateDex } from '@acala-network/sdk-swap';
 import { FixedPointNumber, type Token } from '@acala-network/sdk-core';
 import { firstValueFrom } from 'rxjs';
-import { FEE_BUFFER } from '../../consts';
+import { FEE_BUFFER } from '../../consts/consts';
 import { calculateTransactionFee } from '../../utils/utils';
 import Logger from '../../Logger/Logger';
 

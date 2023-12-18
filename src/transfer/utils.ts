@@ -2,21 +2,21 @@ import { type Extrinsic, Builder } from '@paraspell/sdk';
 import { type ApiPromise } from '@polkadot/api';
 import type BigNumber from 'bignumber.js';
 import type ExchangeNode from '../dexNodes/DexNode';
-import { type TTransferOptionsModified } from '../types';
+import { type TCommonTransferOptionsModified, type TTransferOptionsModified } from '../types';
 import { validateRelayChainCurrency } from '../utils/utils';
 import { submitTransaction } from '../utils/submitTransaction';
 
 export const buildToExchangeExtrinsic = (
   api: ApiPromise,
-  { originNode, exchangeNode, currencyFrom, amount, injectorAddress }: TTransferOptionsModified,
+  { from, exchange, currencyFrom, amount, injectorAddress }: TCommonTransferOptionsModified,
 ): Extrinsic => {
   const builder = Builder(api);
-  if (originNode === 'Polkadot' || originNode === 'Kusama') {
-    return builder.to(exchangeNode).amount(amount).address(injectorAddress).build();
+  if (from === 'Polkadot' || from === 'Kusama') {
+    return builder.to(exchange).amount(amount).address(injectorAddress).build();
   }
   return builder
-    .from(originNode)
-    .to(exchangeNode)
+    .from(from)
+    .to(exchange)
     .currency(currencyFrom)
     .amount(amount)
     .address(injectorAddress)
@@ -25,21 +25,16 @@ export const buildToExchangeExtrinsic = (
 
 export const buildFromExchangeExtrinsic = (
   api: ApiPromise,
-  {
-    destinationNode,
-    exchangeNode,
-    currencyTo,
-    recipientAddress: address,
-  }: TTransferOptionsModified,
+  { to, exchange, currencyTo, recipientAddress: address }: TCommonTransferOptionsModified,
   amountOut: string,
 ): Extrinsic => {
   const builder = Builder(api);
-  if (destinationNode === 'Polkadot' || destinationNode === 'Kusama') {
-    return builder.from(exchangeNode).amount(amountOut).address(address).build();
+  if (to === 'Polkadot' || to === 'Kusama') {
+    return builder.from(exchange).amount(amountOut).address(address).build();
   }
   return builder
-    .from(exchangeNode)
-    .to(destinationNode)
+    .from(exchange)
+    .to(to)
     .currency(currencyTo)
     .amount(amountOut)
     .address(address)
@@ -68,8 +63,8 @@ export const submitTransferToExchange = async (
   api: ApiPromise,
   options: TTransferOptionsModified,
 ): Promise<string> => {
-  const { originNode, currencyFrom, signer, injectorAddress } = options;
-  validateRelayChainCurrency(originNode, currencyFrom);
+  const { from, currencyFrom, signer, injectorAddress } = options;
+  validateRelayChainCurrency(from, currencyFrom);
   const tx = buildToExchangeExtrinsic(api, options);
   return await submitTransaction(api, tx, signer, injectorAddress);
 };
@@ -79,8 +74,8 @@ export const submitTransferToDestination = async (
   options: TTransferOptionsModified,
   amountOut: string,
 ): Promise<string> => {
-  const { destinationNode, currencyTo, signer, injectorAddress } = options;
-  validateRelayChainCurrency(destinationNode, currencyTo);
+  const { to, currencyTo, signer, injectorAddress } = options;
+  validateRelayChainCurrency(to, currencyTo);
   const tx = buildFromExchangeExtrinsic(api, options, amountOut);
   return await submitTransaction(api, tx, signer, injectorAddress);
 };

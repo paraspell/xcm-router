@@ -1,7 +1,7 @@
 import { InvalidCurrencyError, getNodeProvider } from '@paraspell/sdk';
 import ExchangeNode from '../DexNode';
 import { BN } from '@polkadot/util';
-import { type TSwapResult, type TSwapOptions } from '../../types';
+import { type TSwapResult, type TSwapOptions, type TAssetSymbols } from '../../types';
 import { getAssetInfo } from './utils';
 import { type ApiPromise } from '@polkadot/api';
 import {
@@ -11,7 +11,7 @@ import {
   type MultiswapSellAsset,
 } from '@mangata-finance/sdk';
 import { getAllPools, routeExactIn } from './routingUtils';
-import { FEE_BUFFER } from '../../consts';
+import { FEE_BUFFER } from '../../consts/consts';
 import BigNumber from 'bignumber.js';
 import Logger from '../../Logger/Logger';
 
@@ -76,6 +76,12 @@ class MangataExchangeNode extends ExchangeNode {
       tx,
       amountOut: res.bestAmount.toString(),
     };
+  }
+
+  async getAssetSymbols(api: ApiPromise): Promise<TAssetSymbols> {
+    const mangata: MangataInstance = Mangata.instance([getNodeProvider(this.node)]);
+    const assets = await mangata.query.getAssetsInfo();
+    return Object.values(assets).map((asset) => asset.symbol);
   }
 }
 

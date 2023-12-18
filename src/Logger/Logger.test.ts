@@ -10,6 +10,7 @@ import {
 } from 'vitest';
 import Logger from './Logger';
 
+// Unit tests for Logger class
 describe('Logger class', () => {
   let consoleLogSpy: MockInstance;
 

@@ -1,9 +1,11 @@
+// Integration tests for AcalaDex
+
 import { describe, expect, it } from 'vitest';
 import AcalaExchangeNode from './AcalaDex';
 import { type TTransferOptionsModified } from '../../types';
 import { MOCK_ADDRESS, MOCK_TRANSFER_OPTIONS, performSwap } from '../../utils/utils.test';
 
-describe('AcalaDex', () => {
+describe('AcalaDex - integration', () => {
   it('should build a transfer extrinsic without error on Acala', async () => {
     const dex = new AcalaExchangeNode('Acala');
     const transferOptions: TTransferOptionsModified = {
@@ -11,9 +13,9 @@ describe('AcalaDex', () => {
       currencyFrom: 'DOT',
       currencyTo: 'ACA',
       amount: '5000000000',
-      destinationNode: 'Astar',
-      exchangeNode: 'Acala',
-      originNode: 'Polkadot',
+      to: 'Astar',
+      exchange: 'Acala',
+      from: 'Polkadot',
       recipientAddress: MOCK_ADDRESS,
     };
     const tx = await performSwap(transferOptions, dex);
@@ -27,12 +29,19 @@ describe('AcalaDex', () => {
       currencyFrom: 'KSM',
       currencyTo: 'KAR',
       amount: '22000000000000',
-      destinationNode: 'Robonomics',
-      exchangeNode: 'Karura',
-      originNode: 'Kusama',
+      to: 'Robonomics',
+      exchange: 'Karura',
+      from: 'Kusama',
       recipientAddress: MOCK_ADDRESS,
     };
     const tx = await performSwap(options, dex);
     expect(tx).toBeDefined();
+  });
+
+  it('should return asset symbols', async () => {
+    const dex = new AcalaExchangeNode('Acala');
+    const api = await dex.createApiInstance();
+    const symbols = await dex.getAssetSymbols(api);
+    expect(symbols.length).toBeGreaterThan(0);
   });
 });

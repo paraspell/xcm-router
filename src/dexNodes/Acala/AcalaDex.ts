@@ -3,12 +3,12 @@ import ExchangeNode from '../DexNode';
 import { FixedPointNumber } from '@acala-network/sdk-core';
 import { AcalaDex, AggregateDex } from '@acala-network/sdk-swap';
 import { Wallet } from '@acala-network/sdk';
-import { type TSwapResult, type TSwapOptions } from '../../types';
+import { type TSwapResult, type TSwapOptions, type TAssetSymbols } from '../../types';
 import { firstValueFrom } from 'rxjs';
 import { type ApiPromise } from '@polkadot/api';
 import { calculateAcalaTransactionFee, createAcalaApiInstance } from './utils';
 import BigNumber from 'bignumber.js';
-import { FEE_BUFFER } from '../../consts';
+import { FEE_BUFFER } from '../../consts/consts';
 import Logger from '../../Logger/Logger';
 
 class AcalaExchangeNode extends ExchangeNode {
@@ -115,6 +115,13 @@ class AcalaExchangeNode extends ExchangeNode {
 
   async createApiInstance(): Promise<ApiPromise> {
     return await createAcalaApiInstance(this.node);
+  }
+
+  async getAssetSymbols(api: ApiPromise): Promise<TAssetSymbols> {
+    const wallet = new Wallet(api);
+    await wallet.isReady;
+    const tokens = await wallet.getTokens();
+    return Object.values(tokens).map((token) => token.symbol);
   }
 }
 

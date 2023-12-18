@@ -1,4 +1,6 @@
-import { describe, it, expect, beforeAll, vi } from 'vitest';
+// Unit tests for transfer utils
+
+import { describe, it, expect, beforeAll, vi, afterAll } from 'vitest';
 import {
   buildFromExchangeExtrinsic,
   buildToExchangeExtrinsic,
@@ -18,6 +20,27 @@ import BigNumber from 'bignumber.js';
 import type ExchangeNode from '../dexNodes/DexNode';
 import * as transactionUtils from '../utils/submitTransaction';
 
+const builderMock = {
+  from: vi.fn().mockReturnThis(),
+  to: vi.fn().mockReturnThis(),
+  amount: vi.fn().mockReturnThis(),
+  currency: vi.fn().mockReturnThis(),
+  address: vi.fn().mockReturnThis(),
+  build: vi.fn().mockReturnValue({
+    signAsync: vi.fn().mockResolvedValue('signedTx'),
+    send: vi.fn().mockResolvedValue('sentTx'),
+  } as unknown as Extrinsic),
+};
+
+vi.mock('@paraspell/sdk', async () => {
+  const actual = await vi.importActual('@paraspell/sdk');
+  return {
+    ...actual,
+    createApiInstanceForNode: vi.fn().mockResolvedValue(undefined),
+    Builder: vi.fn().mockImplementation(() => builderMock),
+  };
+});
+
 describe('transfer utils', () => {
   let parachainApi: ApiPromise;
   let relaychainApi: ApiPromise;
@@ -27,13 +50,17 @@ describe('transfer utils', () => {
     relaychainApi = await createApiInstanceForNode('Polkadot');
   });
 
+  afterAll(() => {
+    vi.resetAllMocks();
+  });
+
   describe('buildToExchangeExtrinsic', () => {
     it('builds correct Extrinsic for Polkadot origin', async () => {
-      const originNode: TNodeWithRelayChains = 'Polkadot';
+      const from: TNodeWithRelayChains = 'Polkadot';
       const options: TTransferOptionsModified = {
         ...transferParams,
-        originNode,
-        exchangeNode: 'Acala',
+        from,
+        exchange: 'Acala',
       };
 
       const extrinsic = buildToExchangeExtrinsic(relaychainApi, options);
@@ -41,11 +68,11 @@ describe('transfer utils', () => {
     });
 
     it('builds correct Extrinsic for non-Polkadot/Kusama origin', async () => {
-      const originNode: TNodeWithRelayChains = 'Astar';
+      const from: TNodeWithRelayChains = 'Astar';
       const options: TTransferOptionsModified = {
         ...transferParams,
-        originNode,
-        exchangeNode: 'Acala',
+        from,
+        exchange: 'Acala',
       };
 
       const extrinsic = buildToExchangeExtrinsic(parachainApi, options);
@@ -55,22 +82,22 @@ describe('transfer utils', () => {
 
   describe('buildFromExchangeExtrinsic', () => {
     it('builds correct Extrinsic for Polkadot destination', async () => {
-      const destinationNode: TNodeWithRelayChains = 'Polkadot';
+      const to: TNodeWithRelayChains = 'Polkadot';
       const options: TTransferOptionsModified = {
         ...transferParams,
-        destinationNode,
-        exchangeNode: 'Acala',
+        to,
+        exchange: 'Acala',
       };
       const extrinsic = buildFromExchangeExtrinsic(parachainApi, options, '10000000000');
       expect(extrinsic).toBeDefined();
     });
 
     it('builds correct Extrinsic for non-Polkadot/Kusama destination', async () => {
-      const destinationNode: TNodeWithRelayChains = 'Astar';
+      const to: TNodeWithRelayChains = 'Astar';
       const options: TTransferOptionsModified = {
         ...transferParams,
-        destinationNode,
-        exchangeNode: 'Acala',
+        to,
+        exchange: 'Acala',
       };
       const extrinsic = buildFromExchangeExtrinsic(parachainApi, options, '10000000000');
       expect(extrinsic).toBeDefined();
@@ -95,7 +122,7 @@ describe('transfer utils', () => {
       const exchangeNode = new MockExchangeNode();
       const options: TTransferOptionsModified = {
         ...transferParams,
-        exchangeNode: 'Acala',
+        exchange: 'Acala',
       };
       const toDestTransactionFee = new BigNumber(10);
       const toExchangeTransactionFee = new BigNumber(5);
@@ -128,7 +155,7 @@ describe('transfer utils', () => {
       const spy = vi.spyOn(transactionUtils, 'submitTransaction').mockResolvedValue('mockedTxHash');
       const options: TTransferOptionsModified = {
         ...transferParams,
-        exchangeNode: 'Acala',
+        exchange: 'Acala',
       };
       const result = await submitTransferToExchange(relaychainApi, options);
 
@@ -150,8 +177,9 @@ describe('transfer utils', () => {
       const spy = vi.spyOn(transactionUtils, 'submitTransaction').mockResolvedValue('mockedTxHash');
       const options: TTransferOptionsModified = {
         ...transferParams,
-        exchangeNode: 'Acala',
+        exchange: 'Acala',
       };
+
       const result = await submitTransferToDestination(parachainApi, options, '10000000000');
 
       expect(result).toBe('mockedTxHash');

@@ -23,5 +23,6 @@ jobs:
       - run: yarn format:check
       - run: yarn lint:check
       - run: yarn test
+      - run: yarn test:integration
       - run: yarn build
       - uses: codecov/codecov-action@v3

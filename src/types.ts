@@ -1,6 +1,6 @@
 import { type TNodeWithRelayChains, type Extrinsic, type TNode } from '@paraspell/sdk';
 import { type Signer } from '@polkadot/types/types';
-import { type EXCHANGE_NODES } from './consts';
+import { type EXCHANGE_NODES } from './consts/consts';
 
 export type TBigNumber = string | number | bigint;
 
@@ -27,6 +27,7 @@ export enum TransactionType {
 }
 
 export interface TTxProgressInfo {
+  isAutoSelectingExchange?: boolean;
   type: TransactionType;
   hashes?: {
     [TransactionType.TO_EXCHANGE]?: string;
@@ -42,9 +43,8 @@ export enum TransactionStatus {
 }
 
 export interface TTransferOptions {
-  originNode: TNodeWithRelayChains;
-  exchangeNode: TExchangeNode;
-  destinationNode: TNodeWithRelayChains;
+  from: TNodeWithRelayChains;
+  to: TNodeWithRelayChains;
   currencyFrom: string;
   currencyTo: string;
   amount: string;
@@ -52,10 +52,27 @@ export interface TTransferOptions {
   recipientAddress: string;
   slippagePct: string;
   signer: Signer;
-  type: TransactionType;
+  exchange?: TExchangeNode;
   onStatusChange?: (info: TTxProgressInfo) => void;
+  type?: TransactionType;
 }
 
-export type TTransferOptionsModified = Omit<TTransferOptions, 'exchangeNode'> & {
-  exchangeNode: TNode;
+export type TBuildTransferExtrinsicsOptions = Omit<
+  TTransferOptions,
+  'onStatusChange' | 'signer' | 'type'
+>;
+
+export type TTransferOptionsModified = Omit<TTransferOptions, 'exchange'> & {
+  exchange: TNode;
 };
+
+export type TCommonTransferOptions = Omit<TTransferOptions, 'signer'>;
+export type TCommonTransferOptionsModified = Omit<TTransferOptionsModified, 'signer'>;
+
+export type TAssetSymbols = string[];
+export type TAssetsRecord = Record<TExchangeNode, TAssetSymbols>;
+
+export interface TBuildTransferExtrinsicsResult {
+  txs: [Extrinsic, Extrinsic, Extrinsic];
+  exchangeNode: TNode;
+}

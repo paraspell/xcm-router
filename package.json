@@ -23,10 +23,12 @@
     "format:check": "prettier --check src",
     "format:write": "prettier --write src",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage",
+    "test:integration": "vitest run --config ./vitest.config.integration.ts",
+    "test:cov": "vitest run --coverage --config ./vitest.config.coverage.ts",
     "runAll": "yarn compile && yarn format:write && yarn lint && yarn test",
     "postinstall": "patch-package",
-    "release": "yarn runAll && yarn build && standard-version && git push --follow-tags"
+    "release": "yarn runAll && yarn build && standard-version && git push --follow-tags",
+    "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/updateAssets.ts"
   },
   "keywords": [],
   "author": "",
@@ -46,14 +48,14 @@
     "@acala-network/sdk-swap": "^4.1.9-10",
     "@acala-network/sdk-wallet": "^4.1.8-14",
     "@crypto-dex-sdk/amm": "^0.0.2",
-    "@crypto-dex-sdk/currency": "^0.0.2",
+    "@crypto-dex-sdk/currency": "^0.0.3",
     "@crypto-dex-sdk/math": "^0.0.2",
-    "@crypto-dex-sdk/parachains-bifrost": "^0.0.8",
+    "@crypto-dex-sdk/parachains-bifrost": "^0.0.12",
     "@crypto-dex-sdk/token-lists": "^0.0.2",
     "@galacticcouncil/sdk": "^1.1.1",
     "@interlay/interbtc-api": "^2.6.0",
     "@mangata-finance/sdk": "^2.1.1",
-    "@paraspell/sdk": "^3.0.9",
+    "@paraspell/sdk": "^3.0.10",
     "@polkadot/api": "^10.11.1",
     "@polkadot/api-base": "^10.11.1",
     "@polkadot/apps-config": "^0.133.1",
@@ -66,6 +68,7 @@
     "lodash-es": "^4.17.21",
     "patch-package": "^8.0.0",
     "postinstall-postinstall": "^2.1.0",
+    "react": "^18.2.0",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
@@ -88,6 +91,7 @@
     "rollup-plugin-dts": "^6.1.0",
     "rollup-plugin-typescript2": "^0.36.0",
     "standard-version": "^9.5.0",
+    "ts-node": "^10.9.2",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2",
     "vitest": "^1.0.4"

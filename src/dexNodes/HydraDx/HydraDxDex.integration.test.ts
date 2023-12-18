@@ -1,9 +1,11 @@
+// Integration tests for HydraDxDex
+
 import { describe, expect, it } from 'vitest';
 import { type TTransferOptionsModified } from '../../types';
 import HydraDxExchangeNode from './HydraDxDex';
 import { MOCK_TRANSFER_OPTIONS, performSwap } from '../../utils/utils.test';
 
-describe('HydraDxDex', () => {
+describe('HydraDxDex - integration', () => {
   it('should build a transfer extrinsic without error on HydraDx', async () => {
     const dex = new HydraDxExchangeNode('HydraDX');
     const options: TTransferOptionsModified = {
@@ -11,9 +13,9 @@ describe('HydraDxDex', () => {
       currencyFrom: 'ASTR',
       currencyTo: 'DOT',
       amount: '38821036538894063687',
-      destinationNode: 'BifrostPolkadot',
-      exchangeNode: 'HydraDX',
-      originNode: 'Astar',
+      to: 'BifrostPolkadot',
+      exchange: 'HydraDX',
+      from: 'Astar',
     };
     const tx = await performSwap(options, dex);
     expect(tx).toBeDefined();
@@ -26,11 +28,18 @@ describe('HydraDxDex', () => {
       currencyFrom: 'KSM',
       currencyTo: 'USDT',
       amount: '1000000000000',
-      destinationNode: 'Karura',
-      exchangeNode: 'Basilisk',
-      originNode: 'Kusama',
+      to: 'Karura',
+      exchange: 'Basilisk',
+      from: 'Kusama',
     };
     const tx = await performSwap(options, dex);
     expect(tx).toBeDefined();
+  });
+
+  it('should return asset symbols', async () => {
+    const dex = new HydraDxExchangeNode('HydraDX');
+    const api = await dex.createApiInstance();
+    const symbols = await dex.getAssetSymbols(api);
+    expect(symbols.length).toBeGreaterThan(0);
   });
 });

@@ -1,5 +1,11 @@
-import { Title, Stack, Alert, Container, Box } from '@mantine/core';
-import { transfer, TransactionType, TTxProgressInfo } from '@paraspell/xcm-router';
+import { Title, Stack, Alert, Container, Box, Loader, Group, Center } from '@mantine/core';
+import {
+  transfer,
+  TransactionType,
+  TTxProgressInfo,
+  TExchangeNode,
+  TransactionStatus,
+} from '@paraspell/xcm-router';
 import { useWallet } from '../providers/WalletProvider';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { IconAlertCircle } from '@tabler/icons-react';
@@ -7,6 +13,11 @@ import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import TransferForm, { FormValues } from '../components/TransferForm';
 import TransferStepper from '../components/TransferStepper';
+import Confetti from 'react-confetti';
+import { Signer } from '@polkadot/api/types';
+import axios, { AxiosError } from 'axios';
+import { createApiInstanceForNode } from '@paraspell/sdk';
+import { buildTx, submitTransaction } from '../utils';
 
 const HomePage = () => {
   const { selectedAccount } = useWallet();
@@ -20,6 +31,8 @@ const HomePage = () => {
   const [progressInfo, setProgressInfo] = useState<TTxProgressInfo>();
 
   const [showStepper, setShowStepper] = useState(false);
+
+  const [runConfetti, setRunConfetti] = useState(false);
 
   const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>({
     offset: 0,
@@ -41,7 +54,87 @@ const HomePage = () => {
     setProgressInfo(status);
   };
 
+  const submitUsingRouterModule = async (
+    formValues: FormValues,
+    exchange: TExchangeNode | undefined,
+    injectorAddress: string,
+    signer: Signer,
+  ) => {
+    const { transactionType } = formValues;
+    await transfer({
+      ...formValues,
+      injectorAddress: injectorAddress,
+      signer: signer,
+      type: TransactionType[transactionType],
+      exchange: exchange ?? undefined,
+      onStatusChange,
+    });
+  };
+
+  const submitUsingApi = async (
+    formValues: FormValues,
+    exchange: TExchangeNode | undefined,
+    injectorAddress: string,
+    signer: Signer,
+  ) => {
+    const { from } = formValues;
+
+    try {
+      const response = await axios.get('http://localhost:3001/router', {
+        timeout: 120000,
+        params: {
+          ...formValues,
+          exchange: exchange ?? undefined,
+          injectorAddress,
+        },
+      });
+
+      const {
+        txs: [toExchange, swap, toDest],
+        exchangeNode,
+      } = await response.data;
+
+      const originApi = await createApiInstanceForNode(from);
+      const swapApi = await createApiInstanceForNode(exchangeNode);
+      onStatusChange({
+        type: TransactionType.TO_EXCHANGE,
+        status: TransactionStatus.IN_PROGRESS,
+      });
+      await submitTransaction(originApi, buildTx(originApi, toExchange), signer, injectorAddress);
+      onStatusChange({
+        type: TransactionType.SWAP,
+        status: TransactionStatus.IN_PROGRESS,
+      });
+      await submitTransaction(swapApi, buildTx(swapApi, swap), signer, injectorAddress);
+      onStatusChange({
+        type: TransactionType.TO_DESTINATION,
+        status: TransactionStatus.IN_PROGRESS,
+      });
+      await submitTransaction(swapApi, buildTx(swapApi, toDest), signer, injectorAddress);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error(error);
+        let errorMessage = 'Error while fetching exchange data.';
+        if (error.response === undefined) {
+          errorMessage += ' Make sure the API is running.';
+        } else {
+          // Append the server-provided error message if available
+          const serverMessage =
+            error.response.data && error.response.data.message
+              ? ' Server response: ' + error.response.data.message
+              : '';
+          errorMessage += serverMessage;
+        }
+        throw new Error(errorMessage);
+      } else if (error instanceof Error) {
+        console.error(error);
+        throw new Error(error.message);
+      }
+    }
+  };
+
   const onSubmit = async (formValues: FormValues) => {
+    const { useApi } = formValues;
     if (!selectedAccount) {
       alert('No account selected, connect wallet first');
       throw Error('No account selected!');
@@ -51,18 +144,22 @@ const HomePage = () => {
 
     const injector = await web3FromAddress(selectedAccount.address);
 
+    const exchange = formValues.exchange === 'Auto select' ? undefined : formValues.exchange;
+
     try {
       setShowStepper(true);
       setProgressInfo(undefined);
-      const { recipientAddress, transactionType } = formValues;
-      await transfer({
-        ...formValues,
-        injectorAddress: selectedAccount.address,
-        recipientAddress: recipientAddress,
-        signer: injector.signer,
-        type: TransactionType[transactionType],
-        onStatusChange,
-      });
+      if (useApi) {
+        await submitUsingApi(formValues, exchange, selectedAccount.address, injector.signer);
+      } else {
+        await submitUsingRouterModule(
+          formValues,
+          exchange,
+          selectedAccount.address,
+          injector.signer,
+        );
+      }
+      setRunConfetti(true);
       alert('Transaction was successful!');
     } catch (e) {
       if (e instanceof Error) {
@@ -82,6 +179,10 @@ const HomePage = () => {
     closeAlert();
   };
 
+  const onConfettiComplete = () => {
+    setRunConfetti(false);
+  };
+
   return (
     <Container>
       <Stack gap="xl">
@@ -90,7 +191,15 @@ const HomePage = () => {
           <TransferForm onSubmit={onSubmit} loading={loading} />
         </Stack>
         <Box ref={targetRef}>
-          {showStepper && (
+          {progressInfo?.isAutoSelectingExchange && (
+            <Center>
+              <Group mt="md">
+                <Loader />
+                <Title order={4}>Searching for best exchange rate</Title>
+              </Group>
+            </Center>
+          )}
+          {showStepper && !progressInfo?.isAutoSelectingExchange && (
             <Box mt="md">
               <TransferStepper progressInfo={progressInfo} />
             </Box>
@@ -109,6 +218,13 @@ const HomePage = () => {
           )}
         </Box>
       </Stack>
+      <Confetti
+        run={runConfetti}
+        recycle={false}
+        numberOfPieces={500}
+        tweenDuration={10000}
+        onConfettiComplete={onConfettiComplete}
+      />
     </Container>
   );
 };

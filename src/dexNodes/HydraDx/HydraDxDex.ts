@@ -2,9 +2,9 @@ import { type Extrinsic, InvalidCurrencyError, getAssetDecimals } from '@paraspe
 import ExchangeNode from '../DexNode';
 import { PoolService, TradeRouter, BigNumber, PoolType } from '@galacticcouncil/sdk';
 import { calculateFee, getAssetInfo, getMinAmountOut } from './utils';
-import { type TSwapResult, type TSwapOptions } from '../../types';
+import { type TSwapResult, type TSwapOptions, type TAssetSymbols } from '../../types';
 import { type ApiPromise } from '@polkadot/api';
-import { FEE_BUFFER } from '../../consts';
+import { FEE_BUFFER } from '../../consts/consts';
 import Logger from '../../Logger/Logger';
 
 class HydraDxExchangeNode extends ExchangeNode {
@@ -100,6 +100,16 @@ class HydraDxExchangeNode extends ExchangeNode {
     Logger.log('Amount out modified', amountOutModified.toString());
 
     return { tx, amountOut: amountOutModified.toString() };
+  }
+
+  async getAssetSymbols(api: ApiPromise): Promise<TAssetSymbols> {
+    const poolService = new PoolService(api);
+    const tradeRouter = new TradeRouter(
+      poolService,
+      this.node === 'Basilisk' ? { includeOnly: [PoolType.XYK] } : undefined,
+    );
+    const assets = await tradeRouter.getAllAssets();
+    return assets.map((asset) => asset.symbol);
   }
 }
 

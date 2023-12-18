@@ -1589,10 +1589,10 @@
   resolved "https://registry.yarnpkg.com/@galacticcouncil/math-xyk/-/math-xyk-0.2.0.tgz#74feacdf94d4846f1a148835f25936b2ddc7bdfd"
   integrity sha512-mznedOeA8d9BQ8kUQ/4O/P6trqTC4FGwvTDGCHJ0O/bgA9iFb+suctbFtyFT3qfNnngR7FSF2Pls1O/SvtNn8g==
 
-"@galacticcouncil/sdk@^0.7.7":
-  version "0.7.7"
-  resolved "https://registry.yarnpkg.com/@galacticcouncil/sdk/-/sdk-0.7.7.tgz#6f48c136259a33222c9b856c76c6fe6e4e2920bb"
-  integrity sha512-6YYbPJvtgea5rJJbBI9rnWqKCCRs9uSR7eoetLGsewVEFsRXWQfIC6bpl+ULPSEXMvvpd+g4S1qKxTUT5QA2KA==
+"@galacticcouncil/sdk@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@galacticcouncil/sdk/-/sdk-1.1.1.tgz#e5260b3f531a2c987bae20e0b8aa289fed110755"
+  integrity sha512-Wgt7wu00pefuzsTXHZslXNMLn4k0ZmPH8mQYn2+5VyDQyIJkz7Wv2bHdGdcn4x/sZWwESIE3R00s6EdS45KTPg==
   dependencies:
     "@galacticcouncil/math-lbp" "^0.2.1"
     "@galacticcouncil/math-omnipool" "^0.2.0"
@@ -2625,10 +2625,10 @@
     "@mangata-finance/sdk" "^2.1.1"
     ethers "^5.7.1"
 
-"@paraspell/xcm-router@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@paraspell/xcm-router/-/xcm-router-0.0.1.tgz#36a6da6ced5bfb625191f069ac244725961f0b9a"
-  integrity sha512-ZiHoZD8ls0ueULS1GnGr8GvhMKQFLNheh0Vwxyp9TWHyo88ozgVJeGLDXtIhvysbaqa4jqq6nq8Wuo4ajyjvnA==
+"@paraspell/xcm-router@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@paraspell/xcm-router/-/xcm-router-0.0.2.tgz#afc5f8b93b264f07b45a6adbfd6f6f8a734af11b"
+  integrity sha512-xzzJLB0FDKX+bnn+hR3o5teukRXv18cNOsQxtPkwBqIRddFwKXDbsGtzMQxXvL19q+Yjqn0XubIa40eAGZpDOA==
   dependencies:
     "@acala-network/api" "^6.0.4"
     "@acala-network/app-util" "^4.1.5"
@@ -2642,7 +2642,7 @@
     "@crypto-dex-sdk/math" "^0.0.2"
     "@crypto-dex-sdk/parachains-bifrost" "^0.0.8"
     "@crypto-dex-sdk/token-lists" "^0.0.2"
-    "@galacticcouncil/sdk" "^0.7.7"
+    "@galacticcouncil/sdk" "^1.1.1"
     "@interlay/interbtc-api" "^2.6.0"
     "@mangata-finance/sdk" "^2.1.1"
     "@paraspell/sdk" "^3.0.9"

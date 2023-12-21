@@ -14,7 +14,7 @@ Before you begin, ensure you have met the following requirements:
 To install dependencies, follow these steps:
 
 ```bash
-pnpm install
+yarn
 ```
 
 Only pnpm is supported for now.
@@ -24,7 +24,7 @@ Only pnpm is supported for now.
 To use Vite React Project, follow these steps:
 
 ```bash
-pnpm dev
+yarn dev
 ```
 
 This will start the development server. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
@@ -34,7 +34,7 @@ This will start the development server. Open [http://localhost:3000](http://loca
 To run tests, use the following command:
 
 ```bash
-pnpm test
+yarn test
 ```
 
 ## Building the Project
@@ -42,7 +42,7 @@ pnpm test
 To build the project for production, use the following command:
 
 ```bash
-pnpm build
+yarn build
 ```
 
 This will create a `dist` directory with the production build.

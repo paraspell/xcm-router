@@ -1953,7 +1953,7 @@
   resolved "https://registry.yarnpkg.com/@mangata-finance/type-definitions/-/type-definitions-2.0.0.tgz#f0d80fd16825870acb367c3989fd42ab690eb99d"
   integrity sha512-N8o0PgeSjTsb5MLfdsZD/DsD1BldBqrvRZ/KaanPY1ESFAAEu+B9BebSUZm/XFDm9GzQpOZqNg9KaZsghx4E5A==
 
-"@mangata-finance/type-definitions@^2.0.0":
+"@mangata-finance/type-definitions@^2.0.0", "@mangata-finance/type-definitions@^2.1.2":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@mangata-finance/type-definitions/-/type-definitions-2.1.2.tgz#2665ddf4a31ed0ab611c8b14b43ce59da93fad24"
   integrity sha512-kr4mVMuQ6DqZ0H72z0YI8tcdlk4XD4vUgRVYYfTJdXFJhRsfS4YRxfs/iiQPNzWKgoQZKcDqsbQD3xz9T1gELw==
@@ -2066,12 +2066,12 @@
   dependencies:
     "@open-web3/orml-type-definitions" "^2.0.1"
 
-"@paraspell/sdk@^3.0.10":
-  version "3.0.10"
-  resolved "https://registry.yarnpkg.com/@paraspell/sdk/-/sdk-3.0.10.tgz#8cd446d4a054f6f0c28518d3c424b9b3323cae76"
-  integrity sha512-8zYoTey6P0nero+fQ8vRvRhZJzo8mdYfnGDZy6Ebr56OdO5hBNsUtl9z4/mENsLcA0fOErpg5mrmutx6eMbtKg==
+"@paraspell/sdk@^3.0.11":
+  version "3.0.11"
+  resolved "https://registry.yarnpkg.com/@paraspell/sdk/-/sdk-3.0.11.tgz#a2319938cacc7e632afff1b81a99466096408ae0"
+  integrity sha512-4nMR0eAwufg2pWDJ4++a1GGOFa2t9syLlQDoE4NhYC0o/ieRAmIwaU5Bc1kob6MQaQjsdl2JUkuFfyxQXjn2ow==
   dependencies:
-    "@mangata-finance/sdk" "^2.1.1"
+    "@mangata-finance/type-definitions" "^2.1.2"
     ethers "^5.7.1"
 
 "@peaqnetwork/type-definitions@0.0.4":

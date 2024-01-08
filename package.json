@@ -37,7 +37,8 @@
     "node": ">=18"
   },
   "resolutions": {
-    "@acala-network/eth-providers": "2.7.5-1"
+    "@acala-network/eth-providers": "2.7.5-1",
+    "@crypto-dex-sdk/chain": "0.0.4"
   },
   "dependencies": {
     "@acala-network/api": "^6.0.4",
@@ -48,7 +49,8 @@
     "@acala-network/sdk-swap": "^4.1.9-10",
     "@acala-network/sdk-wallet": "^4.1.8-14",
     "@crypto-dex-sdk/amm": "^0.0.2",
-    "@crypto-dex-sdk/currency": "^0.0.3",
+    "@crypto-dex-sdk/chain": "0.0.4",
+    "@crypto-dex-sdk/currency": "^0.0.4",
     "@crypto-dex-sdk/math": "^0.0.2",
     "@crypto-dex-sdk/parachains-bifrost": "^0.0.12",
     "@crypto-dex-sdk/token-lists": "^0.0.2",

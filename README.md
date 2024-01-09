@@ -1,6 +1,6 @@
 # @paraspell/xcm-router
 
-XCM Router is latest ParaSpell innovation, that allows for seameless XCM Exchanges. Send one token type and receive different one you choose on destination chain cross-chain. All within one call and three signatures. This seamless operation allows for a better user experience limiting possiblities of user error. Router currently implements **9 largest Parachain DEXes** and is easy to extend as the amount of DEXes with public SDKs increases. Together there are **579** asset pools to choose from making XCM Router **largest liquidity bridging tool in the ecosystem**.
+XCM Router is ParaSpell's latest innovation, that allows for seamless XCM Exchanges. Send one token type and receive a different one you choose on the destination chain cross-chain. All within one call and three signatures. This seamless operation allows for a better user experience, limiting the possibility of user errors. The router currently implements the **9 largest Parachain DEXes** and is easy to extend as the number of DEXes with public SDKs increases. Together, there are **579** asset pools to choose from, making XCM Router the **largest liquidity bridging tool in the ecosystem**.
 
 
 ### Check out our brand new Wiki documentation! [Wiki docs](https://paraspell.github.io/docs/router/getting-strtd)
@@ -36,9 +36,9 @@ yarn add @paraspell/xcm-router
 ```
 
 ## Importing package
-After installing the XCM-Router package there are two ways of importing it:
+After installing the XCM-Router package, there are two ways of importing it:
 
-### Option 1: Builder pattern 
+### Option 1: Builder pattern
 
 This way allows you to enhance builder patterns and construct your calls in a simple way.
 
@@ -63,7 +63,7 @@ import { transfer,
 
 # XCM Router Implementation Guide
 
-XCM Router is able to perform cross-chain transactions between Polkadot/Kusama Parachains and Relay chains as well. 
+XCM Router is capable of performing cross-chain transactions between Polkadot/Kusama Parachains and Relay chains as well. 
 It works across 9 open source Parachain DEXes.
 
 These are:
@@ -95,7 +95,7 @@ All four of these ways will be explained.
 
 ##  Builder pattern XCM Router example - Automatic exchange selection (Based on best price)
 
-If you wish to have exchange chain selection based on best price outcome, you can opt for automatic exchange selection method. This method can be selected by **not using**  `.exchange()` parameter in the call. Router will then automatically select the best exchange chain for you based on the best price outcome.
+If you wish to have an exchange chain selection based on the best price outcome, you can opt for an automatic exchange selection method. This method can be selected by **not using** the `.exchange()` parameter in the call. The router will then automatically select the best exchange chain for you based on the best price outcome.
 
  ```js
 await RouterBuilder
@@ -122,11 +122,11 @@ Eg. use standard public key `141NGS2jjZca5Ss2Nysth2stJ6rimcnufCNHnh5ExSsftn7U`
 
 Instead of `0x84fc49ce30071ea611731838cc7736113c1ec68fbc47119be8a0805066df9b2b`
 
-  
+
 
 ##  Builder pattern XCM Router example - Manual exchange selection
 
-If you wish to select your exchange chain manually you can do that by providing aditional parameter `.exchange()` in the call. Router will then use exchange chainn of your choice.
+If you wish to select your exchange chain manually, you can provide the additional `.exchange()` parameter to the call. The router will then use the exchange chain of your choice.
 
  ```js
 await RouterBuilder
@@ -160,7 +160,7 @@ Instead of `0x84fc49ce30071ea611731838cc7736113c1ec68fbc47119be8a0805066df9b2b`
 
 ##  Function pattern XCM Router example - Automatic exchange selection (Based on best price)
 
-If you wish to have exchange chain selection based on best price outcome, you can opt for automatic exchange selection method. This method can be selected by **not using**  `exchange:` parameter in the call. Router will then automatically select the best exchange chain for you based on the best price outcome.
+If you wish to have an exchange chain selection based on the best price outcome, you can opt for an automatic exchange selection method. This method can be selected by **not using**  `exchange:` parameter in the call. The router will then automatically select the best exchange chain for you based on the best price outcome.
 
 ```js
 await transfer({
@@ -194,7 +194,7 @@ Instead of `0x84fc49ce30071ea611731838cc7736113c1ec68fbc47119be8a0805066df9b2b`
 
 ##  Function pattern XCM Router example - Manual exchange selection
 
-If you wish to select your exchange chain manually you can do that by providing aditional parameter `exchange:` in the call. Router will then use exchange chainn of your choice.
+If you wish to select your exchange chain manually, you can provide the additional `exchange:` parameter to the call. The router will then use the exchange chain of your choice.
 
 ```js
 await transfer({
@@ -225,7 +225,7 @@ Eg. use standard public key `141NGS2jjZca5Ss2Nysth2stJ6rimcnufCNHnh5ExSsftn7U`
 
 Instead of `0x84fc49ce30071ea611731838cc7736113c1ec68fbc47119be8a0805066df9b2b`
 
-## List of DEX chains, assets and Parachains supported by XCM Router
+## List of DEX chains, assets, and Parachains supported by XCM Router
 
 | DEX | Can send to/receive from | Supported assets | Notes |
 | ------------- | ------------- | ------------- |------------- |

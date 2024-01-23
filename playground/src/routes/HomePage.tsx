@@ -146,6 +146,18 @@ const HomePage = () => {
 
     const exchange = formValues.exchange === 'Auto select' ? undefined : formValues.exchange;
 
+    const originalError = console.error;
+    console.error = (...args) => {
+      if (args[2].includes('ExtrinsicStatus::')) {
+        setError(new Error(args[2]));
+        openAlert();
+        setShowStepper(false);
+        setLoading(false);
+      } else {
+        originalError(...args);
+      }
+    };
+
     try {
       setShowStepper(true);
       setProgressInfo(undefined);

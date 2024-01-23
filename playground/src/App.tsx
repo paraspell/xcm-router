@@ -19,6 +19,7 @@ import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { useState } from 'react';
 import { useWallet } from './providers/WalletProvider';
+import TransferTypesInfo from './components/TransferTypesInfo';
 
 const myColor: MantineColorsTuple = [
   '#ffe9f6',
@@ -123,6 +124,7 @@ const App = () => {
               leftSection={<IconHome2 size="1rem" stroke={1.5} />}
               style={{ borderRadius: 4 }}
             />
+            <TransferTypesInfo />
           </AppShell.Navbar>
           <AppShell.Main>
             <Routes>

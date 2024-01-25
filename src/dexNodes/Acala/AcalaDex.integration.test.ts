@@ -27,9 +27,9 @@ describe('AcalaDex - integration', () => {
     const options: TTransferOptionsModified = {
       ...MOCK_TRANSFER_OPTIONS,
       currencyFrom: 'KSM',
-      currencyTo: 'KAR',
+      currencyTo: 'BNC',
       amount: '22000000000000',
-      to: 'Robonomics',
+      to: 'BifrostKusama',
       exchange: 'Karura',
       from: 'Kusama',
       recipientAddress: MOCK_ADDRESS,

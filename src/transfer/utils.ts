@@ -6,15 +6,15 @@ import { type TCommonTransferOptionsModified, type TTransferOptionsModified } fr
 import { validateRelayChainCurrency } from '../utils/utils';
 import { submitTransaction } from '../utils/submitTransaction';
 
-export const buildToExchangeExtrinsic = (
+export const buildToExchangeExtrinsic = async (
   api: ApiPromise,
   { from, exchange, currencyFrom, amount, injectorAddress }: TCommonTransferOptionsModified,
-): Extrinsic => {
+): Promise<Extrinsic> => {
   const builder = Builder(api);
   if (from === 'Polkadot' || from === 'Kusama') {
-    return builder.to(exchange).amount(amount).address(injectorAddress).build();
+    return await builder.to(exchange).amount(amount).address(injectorAddress).build();
   }
-  return builder
+  return await builder
     .from(from)
     .to(exchange)
     .currency(currencyFrom)
@@ -23,16 +23,16 @@ export const buildToExchangeExtrinsic = (
     .build();
 };
 
-export const buildFromExchangeExtrinsic = (
+export const buildFromExchangeExtrinsic = async (
   api: ApiPromise,
   { to, exchange, currencyTo, recipientAddress: address }: TCommonTransferOptionsModified,
   amountOut: string,
-): Extrinsic => {
+): Promise<Extrinsic> => {
   const builder = Builder(api);
   if (to === 'Polkadot' || to === 'Kusama') {
-    return builder.from(exchange).amount(amountOut).address(address).build();
+    return await builder.from(exchange).amount(amountOut).address(address).build();
   }
-  return builder
+  return await builder
     .from(exchange)
     .to(to)
     .currency(currencyTo)
@@ -65,7 +65,7 @@ export const submitTransferToExchange = async (
 ): Promise<string> => {
   const { from, currencyFrom, signer, injectorAddress } = options;
   validateRelayChainCurrency(from, currencyFrom);
-  const tx = buildToExchangeExtrinsic(api, options);
+  const tx = await buildToExchangeExtrinsic(api, options);
   return await submitTransaction(api, tx, signer, injectorAddress);
 };
 
@@ -76,6 +76,6 @@ export const submitTransferToDestination = async (
 ): Promise<string> => {
   const { to, currencyTo, signer, injectorAddress } = options;
   validateRelayChainCurrency(to, currencyTo);
-  const tx = buildFromExchangeExtrinsic(api, options, amountOut);
+  const tx = await buildFromExchangeExtrinsic(api, options, amountOut);
   return await submitTransaction(api, tx, signer, injectorAddress);
 };

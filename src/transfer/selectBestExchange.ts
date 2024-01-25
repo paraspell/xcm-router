@@ -44,9 +44,9 @@ export const selectBestExchange = async (
     const originApi = await createApiInstanceForNode(from);
     const swapApi = await dex.createApiInstance();
     try {
-      const toDestTx = buildFromExchangeExtrinsic(swapApi, modifiedOptions, amount);
+      const toDestTx = await buildFromExchangeExtrinsic(swapApi, modifiedOptions, amount);
       const toDestTransactionFee = await calculateTransactionFee(toDestTx, injectorAddress);
-      const toExchangeTx = buildToExchangeExtrinsic(originApi, modifiedOptions);
+      const toExchangeTx = await buildToExchangeExtrinsic(originApi, modifiedOptions);
       const toExchangeTransactionFee = await calculateTransactionFee(toExchangeTx, injectorAddress);
       const swapResult = await dex.swapCurrency(
         swapApi,

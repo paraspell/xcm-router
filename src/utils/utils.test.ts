@@ -145,8 +145,8 @@ export const performSwap = async (
 ): Promise<TSwapResult> => {
   const originApi = await createApiInstanceForNode(options.from);
   const swapApi = await dex.createApiInstance();
-  const toDestTx = buildFromExchangeExtrinsic(swapApi, options, options.amount);
-  const toExchangeTx = buildToExchangeExtrinsic(originApi, options);
+  const toDestTx = await buildFromExchangeExtrinsic(swapApi, options, options.amount);
+  const toExchangeTx = await buildToExchangeExtrinsic(originApi, options);
   const toDestTransactionFee = await calculateTransactionFee(toDestTx, options.injectorAddress);
   const toExchangeTransactionFee = await calculateTransactionFee(
     toExchangeTx,

@@ -15,9 +15,9 @@ export const swap = async (
     type: TransactionType.SWAP,
     status: TransactionStatus.IN_PROGRESS,
   });
-  const toDestTx = buildFromExchangeExtrinsic(swapApi, options, amount);
+  const toDestTx = await buildFromExchangeExtrinsic(swapApi, options, amount);
   const toDestTransactionFee = await calculateTransactionFee(toDestTx, injectorAddress);
-  const toExchangeTx = buildToExchangeExtrinsic(originApi, options);
+  const toExchangeTx = await buildToExchangeExtrinsic(originApi, options);
   const toExchangeTransactionFee = await calculateTransactionFee(toExchangeTx, injectorAddress);
   const swapResult = await submitSwap(
     swapApi,

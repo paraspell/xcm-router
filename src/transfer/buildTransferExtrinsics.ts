@@ -28,9 +28,9 @@ export const buildTransferExtrinsics = async (
   validateRelayChainCurrency(from, currencyFrom);
   validateRelayChainCurrency(to, currencyTo);
   const swapApi = await dex.createApiInstance();
-  const toDestTxForSwap = buildFromExchangeExtrinsic(swapApi, modifiedOptions, amount);
+  const toDestTxForSwap = await buildFromExchangeExtrinsic(swapApi, modifiedOptions, amount);
   const toDestTransactionFee = await calculateTransactionFee(toDestTxForSwap, injectorAddress);
-  const toExchangeTx = buildToExchangeExtrinsic(originApi, modifiedOptions);
+  const toExchangeTx = await buildToExchangeExtrinsic(originApi, modifiedOptions);
   const toExchangeTransactionFee = await calculateTransactionFee(toExchangeTx, injectorAddress);
   const { amountOut, tx: swapTx } = await dex.swapCurrency(
     swapApi,
@@ -38,6 +38,6 @@ export const buildTransferExtrinsics = async (
     toDestTransactionFee,
     toExchangeTransactionFee,
   );
-  const toDestTx = buildFromExchangeExtrinsic(swapApi, modifiedOptions, amountOut);
+  const toDestTx = await buildFromExchangeExtrinsic(swapApi, modifiedOptions, amountOut);
   return { txs: [toExchangeTx, swapTx, toDestTx], exchangeNode: dex.node };
 };

@@ -2066,10 +2066,10 @@
   dependencies:
     "@open-web3/orml-type-definitions" "^2.0.1"
 
-"@paraspell/sdk@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@paraspell/sdk/-/sdk-4.0.0.tgz#493c5ed15ff1915dfcb99299d2e67f4ac756ac1e"
-  integrity sha512-TElnqnTS/6WLHvYDZF7N14XGu/kZy6mBY/QfcDCSbMEVhGPTj6ot66+XYojdTbBZRWKtm555zVJvvdO43m4/iw==
+"@paraspell/sdk@^4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@paraspell/sdk/-/sdk-4.0.1.tgz#db6dc571cd5169f2fa69b6d1119c3083ed692f85"
+  integrity sha512-QtDaGL0+zFeP9tN/mzNr0xLKhLSy1AIf7biWlRkjMn5YQLBiRHkEUvwVOj7ZbVWKpkHxcsAz7jUbBxXhSz/PeQ==
   dependencies:
     "@mangata-finance/type-definitions" "^2.1.2"
     ethers "^5.7.1"

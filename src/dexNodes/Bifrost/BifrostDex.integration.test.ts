@@ -27,7 +27,7 @@ describe('BifrostDex - integration', () => {
       ...MOCK_TRANSFER_OPTIONS,
       currencyFrom: 'KAR',
       currencyTo: 'KSM',
-      amount: '1000000000000',
+      amount: '100000000000000',
       to: 'Karura',
       exchange: 'BifrostKusama',
       from: 'Kusama',

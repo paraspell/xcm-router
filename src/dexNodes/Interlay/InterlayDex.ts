@@ -1,7 +1,7 @@
 import { getAllAssetsSymbols, getNodeProvider } from '@paraspell/sdk';
 import ExchangeNode from '../DexNode';
 import { type TSwapResult, type TSwapOptions, type TAssetSymbols } from '../../types';
-import { createInterBtcApi, newMonetaryAmount } from '@interlay/interbtc-api';
+import { createInterBtcApi, newMonetaryAmount } from 'inter-exchange';
 import { type ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 import BigNumber from 'bignumber.js';

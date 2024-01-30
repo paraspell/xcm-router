@@ -26,7 +26,6 @@
     "test:integration": "vitest run --config ./vitest.config.integration.ts",
     "test:cov": "vitest run --coverage --config ./vitest.config.coverage.ts",
     "runAll": "yarn compile && yarn format:write && yarn lint && yarn test",
-    "postinstall": "patch-package",
     "release": "yarn runAll && yarn build && standard-version && git push --follow-tags",
     "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/updateAssets.ts"
   },
@@ -54,7 +53,7 @@
     "@crypto-dex-sdk/parachains-bifrost": "^0.0.12",
     "@crypto-dex-sdk/token-lists": "^0.0.2",
     "@galacticcouncil/sdk": "^1.1.6",
-    "@interlay/interbtc-api": "^2.6.0",
+    "inter-exchange": "^1.0.1",
     "@mangata-finance/sdk": "^2.1.1",
     "@paraspell/sdk": "^4.0.1",
     "@polkadot/api": "^10.11.1",
@@ -67,7 +66,6 @@
     "bignumber.js": "^9.1.2",
     "jsbi": "^4.3.0",
     "lodash-es": "^4.17.21",
-    "patch-package": "^8.0.0",
     "postinstall-postinstall": "^2.1.0",
     "react": "^18.2.0",
     "rxjs": "^7.8.1"

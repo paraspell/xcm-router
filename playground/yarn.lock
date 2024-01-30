@@ -1087,9 +1087,9 @@
   integrity sha512-mznedOeA8d9BQ8kUQ/4O/P6trqTC4FGwvTDGCHJ0O/bgA9iFb+suctbFtyFT3qfNnngR7FSF2Pls1O/SvtNn8g==
 
 "@galacticcouncil/sdk@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@galacticcouncil/sdk/-/sdk-1.1.1.tgz#e5260b3f531a2c987bae20e0b8aa289fed110755"
-  integrity sha512-Wgt7wu00pefuzsTXHZslXNMLn4k0ZmPH8mQYn2+5VyDQyIJkz7Wv2bHdGdcn4x/sZWwESIE3R00s6EdS45KTPg==
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/@galacticcouncil/sdk/-/sdk-1.1.6.tgz#233056760394885e4dfb14a3eacad26c1e3084dd"
+  integrity sha512-GBZgjg4TxvVI9sClMQmSBVqE1Oi5+N19VBjQyGXMhgwnEBt/6558PfyIkh7tRl/FOcOky6iJxcZuZLJUbNfwgQ==
   dependencies:
     "@galacticcouncil/math-lbp" "^0.2.1"
     "@galacticcouncil/math-omnipool" "^0.2.0"
@@ -4884,9 +4884,9 @@ json-stable-stringify-without-jsonify@^1.0.1:
   integrity sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==
 
 json-stable-stringify@^1.0.2:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/json-stable-stringify/-/json-stable-stringify-1.1.0.tgz#43d39c7c8da34bfaf785a61a56808b0def9f747d"
-  integrity sha512-zfA+5SuwYN2VWqN1/5HZaDzQKLJHaBVMZIIM+wuYjdptkaQsqzDdqjqf+lZZJUuJq1aanHiY8LhH8LmH+qBYJA==
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/json-stable-stringify/-/json-stable-stringify-1.1.1.tgz#52d4361b47d49168bcc4e564189a42e5a7439454"
+  integrity sha512-SU/971Kt5qVQfJpyDveVhQ/vya+5hvrjClFOcr8c0Fq5aODJjMwutrOfCU+eCnVD5gpx1Q3fEqkyom77zH1iIg==
   dependencies:
     call-bind "^1.0.5"
     isarray "^2.0.5"

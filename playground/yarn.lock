@@ -1359,14 +1359,6 @@
   dependencies:
     "@open-web3/orml-type-definitions" "^2.0.1"
 
-"@paraspell/sdk@^3.0.11":
-  version "3.0.11"
-  resolved "https://registry.yarnpkg.com/@paraspell/sdk/-/sdk-3.0.11.tgz#a2319938cacc7e632afff1b81a99466096408ae0"
-  integrity sha512-4nMR0eAwufg2pWDJ4++a1GGOFa2t9syLlQDoE4NhYC0o/ieRAmIwaU5Bc1kob6MQaQjsdl2JUkuFfyxQXjn2ow==
-  dependencies:
-    "@mangata-finance/type-definitions" "^2.1.2"
-    ethers "^5.7.1"
-
 "@paraspell/sdk@^4.0.1":
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/@paraspell/sdk/-/sdk-4.0.1.tgz#db6dc571cd5169f2fa69b6d1119c3083ed692f85"

@@ -1,4 +1,4 @@
-import { Title, Stack, Alert, Container, Box, Loader, Group, Center } from '@mantine/core';
+import { Title, Stack, Container, Box, Loader, Group, Center } from '@mantine/core';
 import {
   transfer,
   TransactionType,
@@ -8,18 +8,18 @@ import {
 } from '@paraspell/xcm-router';
 import { useWallet } from '../providers/WalletProvider';
 import { web3FromAddress } from '@polkadot/extension-dapp';
-import { IconAlertCircle } from '@tabler/icons-react';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
-import TransferForm, { FormValues } from '../components/TransferForm';
+import RouterTransferForm, { FormValues } from '../components/RouterTransferForm';
 import TransferStepper from '../components/TransferStepper';
 import Confetti from 'react-confetti';
 import { Signer } from '@polkadot/api/types';
 import axios, { AxiosError } from 'axios';
 import { createApiInstanceForNode } from '@paraspell/sdk';
 import { buildTx, submitTransaction } from '../utils';
+import ErrorAlert from '../components/ErrorAlert';
 
-const HomePage = () => {
+const RouterTransferPage = () => {
   const { selectedAccount } = useWallet();
 
   const [alertOpened, { open: openAlert, close: closeAlert }] = useDisclosure(false);
@@ -114,7 +114,7 @@ const HomePage = () => {
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error(error);
-        let errorMessage = 'Error while fetching exchange data.';
+        let errorMessage = 'Error while fetching data.';
         if (error.response === undefined) {
           errorMessage += ' Make sure the API is running.';
         } else {
@@ -185,8 +185,6 @@ const HomePage = () => {
     }
   };
 
-  const alertIcon = <IconAlertCircle size={24} />;
-
   const onAlertCloseClick = () => {
     closeAlert();
   };
@@ -196,11 +194,11 @@ const HomePage = () => {
   };
 
   return (
-    <Container>
+    <Container p="xl">
       <Stack gap="xl">
         <Stack w="100%" maw={400} mx="auto" gap="lg">
           <Title order={3}>New SpellRouter transfer</Title>
-          <TransferForm onSubmit={onSubmit} loading={loading} />
+          <RouterTransferForm onSubmit={onSubmit} loading={loading} />
         </Stack>
         <Box ref={targetRef}>
           {progressInfo?.isAutoSelectingExchange && (
@@ -217,16 +215,7 @@ const HomePage = () => {
             </Box>
           )}
           {alertOpened && (
-            <Alert
-              title="Error"
-              icon={alertIcon}
-              withCloseButton
-              onClose={onAlertCloseClick}
-              mt="lg"
-              style={{ overflowWrap: 'anywhere' }}
-            >
-              {error?.message}
-            </Alert>
+            <ErrorAlert onAlertCloseClick={onAlertCloseClick}>{error?.message}</ErrorAlert>
           )}
         </Box>
       </Stack>
@@ -241,4 +230,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default RouterTransferPage;

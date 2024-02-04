@@ -10,8 +10,8 @@ import {
   Modal,
   Stack,
 } from '@mantine/core';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import HomePage from './routes/HomePage';
+import { BrowserRouter, Routes, Route, NavLink as RouterNavLink } from 'react-router-dom';
+import RouterTransferPage from './routes/RouterTransferPage';
 import { useDisclosure } from '@mantine/hooks';
 import { AppShell, Burger, Group } from '@mantine/core';
 import { IconHome2 } from '@tabler/icons-react';
@@ -20,6 +20,7 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { useState } from 'react';
 import { useWallet } from './providers/WalletProvider';
 import TransferTypesInfo from './components/TransferTypesInfo';
+import XcmSdkSandbox from './routes/XcmSdkSandbox';
 
 const myColor: MantineColorsTuple = [
   '#ffe9f6',
@@ -101,7 +102,6 @@ const App = () => {
         <AppShell
           header={{ height: 60 }}
           navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
-          padding="xl"
         >
           <AppShell.Header>
             <Group h="100%" px="md" justify="space-between">
@@ -118,17 +118,34 @@ const App = () => {
             </Group>
           </AppShell.Header>
           <AppShell.Navbar p="md">
-            <NavLink
-              active={true}
-              label="Playground"
-              leftSection={<IconHome2 size="1rem" stroke={1.5} />}
-              style={{ borderRadius: 4 }}
-            />
+            <RouterNavLink to="/" style={{ color: 'black' }}>
+              {({ isActive }) => (
+                <NavLink
+                  component="div"
+                  active={isActive}
+                  label="Playground"
+                  leftSection={<IconHome2 size="1rem" stroke={1.5} />}
+                  style={{ borderRadius: 4 }}
+                />
+              )}
+            </RouterNavLink>
+            <RouterNavLink to="/xcm-sdk-sandbox" style={{ color: 'black' }}>
+              {({ isActive }) => (
+                <NavLink
+                  component="div"
+                  active={isActive}
+                  label="XCM SDK Sandbox"
+                  leftSection={<IconHome2 size="1rem" stroke={1.5} />}
+                  style={{ borderRadius: 4 }}
+                />
+              )}
+            </RouterNavLink>
             <TransferTypesInfo />
           </AppShell.Navbar>
           <AppShell.Main>
             <Routes>
-              <Route path="/" Component={HomePage} />
+              <Route path="/" Component={RouterTransferPage} />
+              <Route path="/xcm-sdk-sandbox" Component={XcmSdkSandbox} />
             </Routes>
           </AppShell.Main>
         </AppShell>
